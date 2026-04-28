@@ -23,14 +23,89 @@ export const HOST_STATS = [
   { userId: 'U005', handle: '@vintage_closet', totalShows: 22, avgViewers: 189, totalGmv: 8900000, avgGmvPerShow: 404545, topCategory: '남성의류', lastShowDate: '2026-04-27' },
 ];
 
-export const CATEGORIES = [
-  { id: 'C001', name: '여성의류', slug: 'womens-clothing', sortOrder: 1, active: true, showCount: 128 },
-  { id: 'C002', name: '신발', slug: 'shoes', sortOrder: 2, active: true, showCount: 89 },
-  { id: 'C003', name: '핸드백', slug: 'handbags', sortOrder: 3, active: true, showCount: 64 },
-  { id: 'C004', name: '홈/리빙', slug: 'home-living', sortOrder: 4, active: true, showCount: 41 },
-  { id: 'C005', name: '남성의류', slug: 'mens-clothing', sortOrder: 5, active: true, showCount: 55 },
-  { id: 'C006', name: '키즈', slug: 'kids', sortOrder: 6, active: false, showCount: 18 },
-  { id: 'C007', name: '뷰티', slug: 'beauty', sortOrder: 7, active: true, showCount: 33 },
+export const LIVE_CATEGORIES = [
+  {
+    id: 'LC001', name: "Women's Apparel", contents: 428,
+    subs: [
+      { id: 'LS001', name: 'Vintage',               contents: 93  },
+      { id: 'LS002', name: 'Contemporary',           contents: 112 },
+      { id: 'LS003', name: 'Streetwear',             contents: 87  },
+      { id: 'LS004', name: 'Activewear (Athleisure)', contents: 76  },
+      { id: 'LS005', name: 'Plus Size',              contents: 60  },
+    ],
+  },
+  {
+    id: 'LC002', name: 'Bags', contents: 215,
+    subs: [
+      { id: 'LS006', name: 'Luxury Bags',   contents: 134 },
+      { id: 'LS007', name: 'Designer Bags', contents: 81  },
+    ],
+  },
+  {
+    id: 'LC003', name: "Men's Apparel", contents: 310,
+    subs: [
+      { id: 'LS008', name: 'Vintage',       contents: 74  },
+      { id: 'LS009', name: 'Streetwear',    contents: 98  },
+      { id: 'LS010', name: 'Contemporary',  contents: 88  },
+      { id: 'LS011', name: 'Workwear',      contents: 50  },
+    ],
+  },
+  {
+    id: 'LC004', name: 'Shoes', contents: 184,
+    subs: [
+      { id: 'LS012', name: 'Sneakers',      contents: 102 },
+      { id: 'LS013', name: 'Heels & Pumps', contents: 45  },
+      { id: 'LS014', name: 'Boots',         contents: 37  },
+    ],
+  },
+  {
+    id: 'LC005', name: 'Kids', contents: 97,
+    subs: [
+      { id: 'LS015', name: 'Boys',  contents: 48 },
+      { id: 'LS016', name: 'Girls', contents: 49 },
+    ],
+  },
+  {
+    id: 'LC006', name: 'Beauty', contents: 143,
+    subs: [
+      { id: 'LS017', name: 'Skincare', contents: 89 },
+      { id: 'LS018', name: 'Makeup',   contents: 54 },
+    ],
+  },
+];
+
+export const BRAND_TAGS = [
+  { id: 'BT001', name: 'Adidas',      contents: 142 },
+  { id: 'BT002', name: 'Balenciaga',  contents: 38  },
+  { id: 'BT003', name: 'Carhartt',    contents: 27  },
+  { id: 'BT004', name: 'Chanel',      contents: 91  },
+  { id: 'BT005', name: 'Coach',       contents: 54  },
+  { id: 'BT006', name: 'Dior',        contents: 47  },
+  { id: 'BT007', name: 'Fendi',       contents: 33  },
+  { id: 'BT008', name: 'Gucci',       contents: 88  },
+  { id: 'BT009', name: 'H&M',         contents: 210 },
+  { id: 'BT010', name: 'Jordan',      contents: 176 },
+  { id: 'BT011', name: 'Kate Spade',  contents: 62  },
+  { id: 'BT012', name: 'Louis Vuitton', contents: 115 },
+  { id: 'BT013', name: 'Lululemon',   contents: 94  },
+  { id: 'BT014', name: 'Nike',        contents: 231 },
+  { id: 'BT015', name: 'Off-White',   contents: 41  },
+  { id: 'BT016', name: 'Prada',       contents: 59  },
+  { id: 'BT017', name: 'Ralph Lauren', contents: 78 },
+  { id: 'BT018', name: 'Saint Laurent', contents: 44 },
+  { id: 'BT019', name: 'Tory Burch',  contents: 67  },
+  { id: 'BT020', name: 'Under Armour', contents: 53 },
+  { id: 'BT021', name: 'Versace',     contents: 29  },
+  { id: 'BT022', name: 'Zara',        contents: 188 },
+];
+
+export const SALE_TYPES = [
+  { id: 'ST001', name: 'None'               },
+  { id: 'ST002', name: 'Luxury Price'       },
+  { id: 'ST003', name: 'Clearance'          },
+  { id: 'ST004', name: 'Budget / Low Price' },
+  { id: 'ST005', name: 'Live Flash Sale'    },
+  { id: 'ST006', name: 'Auction'            },
 ];
 
 export const EVENTS = [
