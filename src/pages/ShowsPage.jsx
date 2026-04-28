@@ -1,76 +1,93 @@
 import { useState } from 'react';
 import { SHOWS, STATUS_LABELS, STATUS_BADGE_CLASS } from '../data/sampleData';
 
-const STATUS_FILTERS = ['all', 'live', 'scheduled', 'rehearsal', 'done'];
+/* status sort priority: live → scheduled → done */
+const STATUS_ORDER = { live: 0, scheduled: 1, done: 2 };
+const SORT_TABS = [
+  { key: 'all',       label: '전체' },
+  { key: 'live',      label: '진행중' },
+  { key: 'scheduled', label: '예정' },
+  { key: 'done',      label: '종료' },
+];
 
 function formatTime(iso) {
   if (!iso) return '–';
-  return new Date(iso).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString('ko-KR', {
+    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+  });
 }
 
-function formatGmv(n) {
-  if (!n) return '–';
-  return n.toLocaleString('ko-KR') + '원';
+function avatarBg(handle) {
+  const colors = ['#e0d7f5', '#d7e8f5', '#d7f5e0', '#f5e0d7', '#f5f0d7', '#e0f5f0'];
+  let n = 0;
+  for (const c of handle) n += c.charCodeAt(0);
+  return colors[n % colors.length];
+}
+
+function avatarText(handle) {
+  return handle.replace('@', '').slice(0, 2).toUpperCase();
+}
+
+/* grayed-out "coming soon" button */
+function PlannedBtn({ label }) {
+  return (
+    <button
+      className="btn btn-sm btn-ghost"
+      disabled
+      title="준비 중"
+      style={{ opacity: 0.55, cursor: 'not-allowed', position: 'relative' }}
+    >
+      {label}
+      <span style={{
+        fontSize: 9, fontWeight: 700, color: 'var(--muted)',
+        marginLeft: 4, verticalAlign: 'middle',
+      }}>예정</span>
+    </button>
+  );
 }
 
 export default function ShowsPage() {
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortKey, setSortKey] = useState('all');
   const [search, setSearch] = useState('');
-  const [confirmModal, setConfirmModal] = useState(null);
   const [statsModal, setStatsModal] = useState(null);
-  const [shows, setShows] = useState(SHOWS);
+  const [shows] = useState(SHOWS);
 
-  const filtered = shows.filter((s) => {
-    if (statusFilter !== 'all' && s.status !== statusFilter) return false;
-    if (search && !s.seller.includes(search) && !s.handle.includes(search) && !s.title.includes(search)) return false;
-    return true;
-  });
-
-  function handleDelete(show) {
-    setConfirmModal({
-      type: 'danger',
-      title: '방송 삭제',
-      message: `"${show.title}" 방송을 삭제하시겠습니까?`,
-      detail: '삭제된 방송은 복구할 수 없습니다.',
-      onConfirm: () => {
-        setShows((prev) => prev.filter((s) => s.id !== show.id));
-        setConfirmModal(null);
-      },
-    });
-  }
-
-  function handleRehearsal(show) {
-    setConfirmModal({
-      type: 'default',
-      title: '리허설 시작',
-      message: `"${show.title}" 방송을 리허설 상태로 전환하시겠습니까?`,
-      detail: '호스트에게 리허설 시작 알림이 발송됩니다.',
-      onConfirm: () => {
-        setShows((prev) => prev.map((s) => s.id === show.id ? { ...s, status: 'rehearsal' } : s));
-        setConfirmModal(null);
-      },
-    });
-  }
+  const list = shows
+    .filter((s) => {
+      if (sortKey !== 'all' && s.status !== sortKey) return false;
+      if (search) {
+        const q = search.toLowerCase();
+        return s.handle.toLowerCase().includes(q) || s.title.toLowerCase().includes(q);
+      }
+      return true;
+    })
+    .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
 
   return (
     <>
+      {/* ── Sort bar ── */}
       <div className="filter-bar">
         <div className="filter-group">
-          <span className="filter-label">상태</span>
-          {STATUS_FILTERS.map((s) => (
+          <span className="filter-label">정렬</span>
+          {SORT_TABS.map((tab) => (
             <button
-              key={s}
-              className={`chip${statusFilter === s ? ' active' : ''}`}
-              onClick={() => setStatusFilter(s)}
+              key={tab.key}
+              className={`chip${sortKey === tab.key ? ' active' : ''}`}
+              onClick={() => setSortKey(tab.key)}
             >
-              {s === 'all' ? '전체' : STATUS_LABELS[s]}
+              {tab.label}
+              {tab.key !== 'all' && (
+                <span style={{ marginLeft: 5, opacity: 0.75 }}>
+                  ({shows.filter((s) => s.status === tab.key).length})
+                </span>
+              )}
             </button>
           ))}
         </div>
         <div className="filter-group filter-right">
           <input
             className="inp inp-search"
-            placeholder="셀러 또는 방송 검색"
+            placeholder="셀러 핸들 또는 방송 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -78,7 +95,7 @@ export default function ShowsPage() {
       </div>
 
       <div className="sec-header">
-        <span className="sec-count">{filtered.length}개 방송</span>
+        <span className="sec-count">{list.length}개 방송</span>
       </div>
 
       <table className="tbl">
@@ -88,42 +105,59 @@ export default function ShowsPage() {
             <th>제목</th>
             <th>셀러</th>
             <th>카테고리</th>
-            <th>상태</th>
+            <th className="c">상태</th>
             <th>시작시간</th>
-            <th className="r">시청자</th>
-            <th className="r">GMV</th>
+            <th>종료시간</th>
             <th className="c">액션</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.length === 0 && (
-            <tr><td colSpan={9} className="tbl-empty">조회된 방송이 없습니다.</td></tr>
+          {list.length === 0 && (
+            <tr><td colSpan={8} className="tbl-empty">조회된 방송이 없습니다.</td></tr>
           )}
-          {filtered.map((show) => (
+          {list.map((show) => (
             <tr key={show.id}>
               <td className="mono">{show.id}</td>
-              <td>{show.title}</td>
+              <td style={{ maxWidth: 220 }}>
+                <span style={{ fontWeight: 600, fontSize: 13 }}>{show.title}</span>
+              </td>
               <td>
-                <div className="user-cell">
-                  <div className="avatar">{show.seller[0]}</div>
-                  <div>
-                    <div className="user-name">{show.seller}</div>
-                    <div className="user-handle">{show.handle}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <div style={{
+                    width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                    background: avatarBg(show.handle),
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, fontWeight: 700, color: '#555',
+                  }}>
+                    {avatarText(show.handle)}
                   </div>
+                  <span style={{ fontSize: 12, color: 'var(--burgundy)', fontWeight: 600 }}>{show.handle}</span>
                 </div>
               </td>
-              <td>{show.category}</td>
-              <td><span className={`badge ${STATUS_BADGE_CLASS[show.status]}`}>{STATUS_LABELS[show.status]}</span></td>
+              <td>
+                <div style={{ lineHeight: 1.4 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>{show.category}</div>
+                  <div style={{ fontSize: 11, color: 'var(--muted)' }}>{show.subCategory}</div>
+                </div>
+              </td>
+              <td className="c">
+                <span className={`badge ${STATUS_BADGE_CLASS[show.status]}`}>
+                  {STATUS_LABELS[show.status]}
+                </span>
+              </td>
               <td className="date">{formatTime(show.startTime)}</td>
-              <td className="r">{show.viewerCount > 0 ? show.viewerCount.toLocaleString() : '–'}</td>
-              <td className="r">{formatGmv(show.gmv)}</td>
+              <td className="date">{formatTime(show.endTime)}</td>
               <td>
                 <div className="actions">
-                  {(show.status === 'scheduled' || show.status === 'live') && (
-                    <button className="btn btn-sm btn-amber" onClick={() => handleRehearsal(show)}>리허설</button>
-                  )}
-                  <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>통계</button>
-                  <button className="btn btn-sm btn-red" onClick={() => handleDelete(show)}>삭제</button>
+                  <button
+                    className="btn btn-sm btn-blue"
+                    onClick={() => setStatsModal(show)}
+                  >
+                    통계
+                  </button>
+                  <PlannedBtn label="미노출" />
+                  <PlannedBtn label="삭제" />
+                  <PlannedBtn label="채팅관리" />
                 </div>
               </td>
             </tr>
@@ -131,30 +165,7 @@ export default function ShowsPage() {
         </tbody>
       </table>
 
-      {confirmModal && (
-        <div className="overlay" onClick={() => setConfirmModal(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <span className="modal-title">{confirmModal.title}</span>
-              <button className="modal-close" onClick={() => setConfirmModal(null)}>✕</button>
-            </div>
-            <div className="modal-body">
-              <p className="modal-msg">{confirmModal.message}</p>
-              {confirmModal.detail && <div className="modal-detail">{confirmModal.detail}</div>}
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmModal(null)}>취소</button>
-              <button
-                className={`btn ${confirmModal.type === 'danger' ? 'btn-red' : 'btn-primary'}`}
-                onClick={confirmModal.onConfirm}
-              >
-                확인
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* ── Stats modal ── */}
       {statsModal && (
         <div className="overlay" onClick={() => setStatsModal(null)}>
           <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
@@ -169,9 +180,11 @@ export default function ShowsPage() {
                 </thead>
                 <tbody>
                   <tr><td>방송 ID</td><td className="r mono">{statsModal.id}</td></tr>
-                  <tr><td>카테고리</td><td className="r">{statsModal.category}</td></tr>
-                  <tr><td>최대 동시접속</td><td className="r">{statsModal.viewerCount > 0 ? statsModal.viewerCount.toLocaleString() : '–'}</td></tr>
-                  <tr><td>총 GMV</td><td className="r">{formatGmv(statsModal.gmv)}</td></tr>
+                  <tr><td>셀러</td><td className="r" style={{ color: 'var(--burgundy)', fontWeight: 600 }}>{statsModal.handle}</td></tr>
+                  <tr><td>카테고리</td><td className="r">{statsModal.category} › {statsModal.subCategory}</td></tr>
+                  <tr><td>상태</td><td className="r">{STATUS_LABELS[statsModal.status]}</td></tr>
+                  <tr><td>최대 동시접속</td><td className="r">{statsModal.viewerCount > 0 ? statsModal.viewerCount.toLocaleString() + '명' : '–'}</td></tr>
+                  <tr><td>총 GMV</td><td className="r">{statsModal.gmv > 0 ? statsModal.gmv.toLocaleString('ko-KR') + '원' : '–'}</td></tr>
                   <tr><td>시작시간</td><td className="r">{formatTime(statsModal.startTime)}</td></tr>
                   <tr><td>종료시간</td><td className="r">{formatTime(statsModal.endTime)}</td></tr>
                 </tbody>

@@ -1,10 +1,12 @@
 export const SHOWS = [
-  { id: 'SH001', title: '봄 신상 원피스 & 블라우스 특가', seller: '스타일리스트_지은', handle: '@jieun_style', category: '여성의류', status: 'live', startTime: '2026-04-28T14:00', endTime: null, viewerCount: 342, gmv: 1280000 },
-  { id: 'SH002', title: '나이키 / 아디다스 운동화 한정세일', seller: '스니커즈마켓', handle: '@sneakers_mkt', category: '신발', status: 'scheduled', startTime: '2026-04-28T18:00', endTime: null, viewerCount: 0, gmv: 0 },
-  { id: 'SH003', title: '명품백 & 지갑 진품보장 특가', seller: '럭셔리하우스', handle: '@luxury_house', category: '핸드백', status: 'scheduled', startTime: '2026-04-29T12:00', endTime: null, viewerCount: 0, gmv: 0 },
-  { id: 'SH004', title: '봄맞이 홈데코 리빙 소품 할인전', seller: '인테리어공방', handle: '@interior_atelier', category: '홈/리빙', status: 'done', startTime: '2026-04-27T15:00', endTime: '2026-04-27T17:30', viewerCount: 891, gmv: 3450000 },
-  { id: 'SH005', title: '빈티지 데님 & 레더 재킷 컬렉션', seller: '빈티지클로젯', handle: '@vintage_closet', category: '남성의류', status: 'done', startTime: '2026-04-27T20:00', endTime: '2026-04-27T21:45', viewerCount: 512, gmv: 2100000 },
-  { id: 'SH006', title: '키즈 여름 신상 의류 총집합', seller: '베이비맘스토어', handle: '@babymom_store', category: '키즈', status: 'rehearsal', startTime: '2026-04-28T16:00', endTime: null, viewerCount: 0, gmv: 0 },
+  { id: 'SH001', title: '봄 신상 원피스 & 블라우스 특가', handle: '@jieun_style', category: "Women's Apparel", subCategory: 'Contemporary', status: 'live',      startTime: '2026-04-28T14:00', endTime: null,              viewerCount: 342, gmv: 1280000 },
+  { id: 'SH002', title: '나이키 / 아디다스 운동화 한정세일',  handle: '@sneakers_mkt',    category: 'Shoes',           subCategory: 'Sneakers',      status: 'live',      startTime: '2026-04-28T15:30', endTime: null,              viewerCount: 218, gmv: 870000  },
+  { id: 'SH003', title: '명품백 & 지갑 진품보장 특가',       handle: '@luxury_house',    category: 'Bags',            subCategory: 'Luxury Bags',   status: 'scheduled', startTime: '2026-04-28T18:00', endTime: null,              viewerCount: 0,   gmv: 0       },
+  { id: 'SH004', title: '어버이날 선물 홈데코 특가',          handle: '@interior_atelier',category: "Men's Apparel",   subCategory: 'Workwear',      status: 'scheduled', startTime: '2026-04-29T12:00', endTime: null,              viewerCount: 0,   gmv: 0       },
+  { id: 'SH005', title: '봄 뷰티 스킨케어 라이브',            handle: '@beauty_kr',       category: 'Beauty',          subCategory: 'Skincare',      status: 'scheduled', startTime: '2026-04-29T20:00', endTime: null,              viewerCount: 0,   gmv: 0       },
+  { id: 'SH006', title: '빈티지 데님 & 레더 재킷 컬렉션',    handle: '@vintage_closet',  category: "Men's Apparel",   subCategory: 'Vintage',       status: 'done',      startTime: '2026-04-27T20:00', endTime: '2026-04-27T21:45', viewerCount: 512, gmv: 2100000 },
+  { id: 'SH007', title: '봄맞이 홈데코 리빙 소품 할인전',     handle: '@interior_atelier',category: "Women's Apparel", subCategory: 'Vintage',       status: 'done',      startTime: '2026-04-27T15:00', endTime: '2026-04-27T17:30', viewerCount: 891, gmv: 3450000 },
+  { id: 'SH008', title: '키즈 여름 신상 의류 총집합',          handle: '@babymom_store',   category: 'Kids',            subCategory: 'Girls',         status: 'done',      startTime: '2026-04-26T14:00', endTime: '2026-04-26T15:20', viewerCount: 204, gmv: 640000  },
 ];
 
 export const HOSTS = [
