@@ -96,8 +96,9 @@ function ChatModCell({ show, onUpdate }) {
 export default function ShowsPage() {
   const [sortStatus, setSortStatus] = useState('all');
   const [search, setSearch]         = useState('');
-  const [shows, setShows]           = useState(SHOWS);
-  const [statsModal, setStatsModal] = useState(null);
+  const [shows, setShows]             = useState(SHOWS);
+  const [statsModal, setStatsModal]   = useState(null);
+  const [forceEndModal, setForceEndModal] = useState(null);
 
   function updateModerators(showId, mods) {
     setShows((prev) => prev.map((s) => s.id === showId ? { ...s, chatModerators: mods } : s));
@@ -202,6 +203,9 @@ export default function ShowsPage() {
               <td>
                 <div className="actions">
                   <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>통계</button>
+                  {show.status === 'live' && (
+                    <button className="btn btn-sm btn-red" onClick={() => setForceEndModal(show)}>강제종료</button>
+                  )}
                   <PlannedBtn label="미노출" />
                   <PlannedBtn label="삭제" />
                   <PlannedBtn label="채팅관리" />
@@ -211,6 +215,45 @@ export default function ShowsPage() {
           ))}
         </tbody>
       </table>
+
+      {/* ── 강제종료 확인 모달 ── */}
+      {forceEndModal && (
+        <div className="overlay" onClick={() => setForceEndModal(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">방송 강제종료</span>
+              <button className="modal-close" onClick={() => setForceEndModal(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-msg">
+                <strong>{forceEndModal.handle}</strong>의 방송을 강제종료하시겠습니까?
+              </p>
+              <p className="modal-msg" style={{ marginTop: 4 }}>
+                "{forceEndModal.title}"
+              </p>
+              <div className="modal-detail">
+                강제종료 즉시 방송이 중단되며 시청자에게 종료 안내가 표시됩니다. 이 작업은 되돌릴 수 없습니다.
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setForceEndModal(null)}>취소</button>
+              <button
+                className="btn btn-red"
+                onClick={() => {
+                  setShows((prev) => prev.map((s) =>
+                    s.id === forceEndModal.id
+                      ? { ...s, status: 'done', endTime: new Date().toISOString().slice(0, 16) }
+                      : s
+                  ));
+                  setForceEndModal(null);
+                }}
+              >
+                강제종료
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── 통계 모달 ── */}
       {statsModal && (
