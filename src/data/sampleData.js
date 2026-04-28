@@ -34,10 +34,39 @@ export const CATEGORIES = [
 ];
 
 export const EVENTS = [
-  { id: 'EV001', title: '봄맞이 패션위크 라이브', description: '봄 신상 패션 아이템 특가 기획전', startDate: '2026-05-01T10:00', endDate: '2026-05-07T23:59', status: 'scheduled', showCount: 0, bannerUrl: '' },
-  { id: 'EV002', title: '어버이날 선물 특별전', description: '어버이날 맞이 선물용 상품 모음', startDate: '2026-05-05T00:00', endDate: '2026-05-08T23:59', status: 'scheduled', showCount: 0, bannerUrl: '' },
-  { id: 'EV003', title: '4월 뷰티 페스타', description: '봄 뷰티 아이템 특가 라이브', startDate: '2026-04-15T10:00', endDate: '2026-04-30T23:59', status: 'live', showCount: 12, bannerUrl: '' },
-  { id: 'EV004', title: '3월 홈리빙 특가전', description: '봄 인테리어 & 리빙 세일', startDate: '2026-03-01T00:00', endDate: '2026-03-31T23:59', status: 'done', showCount: 28, bannerUrl: '' },
+  {
+    id: 'RCB0', title: '[Trending] Only Alo and LuLu week',
+    startDate: '2026-03-23T02:29', endDate: '2026-03-26T02:29',
+    sellers: [
+      { handle: '@nike_seller', name: 'nike seller' },
+      { handle: '@lulu_seller', name: 'lulu seller' },
+      { handle: '@alo_seller',  name: 'alo seller' },
+    ],
+  },
+  {
+    id: 'CXMC', title: 'K-Beauty Exclusive week (3/30-4/1)',
+    startDate: '2026-03-29T20:32', endDate: '2026-03-31T20:32',
+    sellers: [
+      { handle: '@beauty_kr',  name: 'beauty kr' },
+      { handle: '@kbeauty_co', name: 'kbeauty co' },
+    ],
+  },
+  {
+    id: 'Y1XS', title: 'NWT Rare Sneakers from Nike',
+    startDate: '2026-03-29T20:30', endDate: '2026-04-02T20:30',
+    sellers: [
+      { handle: '@sneakers_mkt', name: 'sneakers mkt' },
+      { handle: '@rare_kicks',   name: 'rare kicks' },
+    ],
+  },
+  {
+    id: '0SKT', title: 'Trending Spring Lookbook',
+    startDate: '2026-03-23T08:28', endDate: '2026-03-26T20:28',
+    sellers: [
+      { handle: '@jieun_style',    name: '스타일리스트 지은' },
+      { handle: '@vintage_closet', name: '빈티지클로젯' },
+    ],
+  },
 ];
 
 export const STATUS_LABELS = {

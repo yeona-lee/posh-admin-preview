@@ -1,33 +1,46 @@
 import { useState } from 'react';
-import { EVENTS, STATUS_LABELS, STATUS_BADGE_CLASS } from '../data/sampleData';
+import { EVENTS } from '../data/sampleData';
 
-const STATUS_FILTERS = ['all', 'live', 'scheduled', 'done'];
-const emptyForm = { title: '', description: '', startDate: '', endDate: '', status: 'scheduled' };
+const emptyForm = { title: '', startDate: '', endDate: '', sellers: [] };
 
 function formatDate(iso) {
   if (!iso) return '–';
-  return new Date(iso).toLocaleString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  return new Date(iso).toLocaleString('en-US', {
+    month: '2-digit', day: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  });
+}
+
+function initials(handle) {
+  return handle.replace('@', '').slice(0, 2).toUpperCase();
+}
+
+function randomColor(str) {
+  const colors = ['#e8d5c4', '#c4d8e8', '#d5e8c4', '#e8c4d5', '#d5c4e8', '#e8e4c4'];
+  let n = 0;
+  for (let i = 0; i < str.length; i++) n += str.charCodeAt(i);
+  return colors[n % colors.length];
 }
 
 export default function EventsPage() {
   const [events, setEvents] = useState(EVENTS);
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [formMode, setFormMode] = useState(null);
+  const [formMode, setFormMode] = useState(null); // 'create' | 'edit'
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState(null);
+  const [sellerInput, setSellerInput] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
-
-  const filtered = events.filter((e) => statusFilter === 'all' || e.status === statusFilter);
 
   function openCreate() {
     setForm(emptyForm);
     setEditId(null);
+    setSellerInput('');
     setFormMode('create');
   }
 
   function openEdit(ev) {
-    setForm({ title: ev.title, description: ev.description, startDate: ev.startDate, endDate: ev.endDate, status: ev.status });
+    setForm({ title: ev.title, startDate: ev.startDate, endDate: ev.endDate, sellers: [...ev.sellers] });
     setEditId(ev.id);
+    setSellerInput('');
     setFormMode('edit');
   }
 
@@ -35,16 +48,32 @@ export default function EventsPage() {
     setFormMode(null);
     setForm(emptyForm);
     setEditId(null);
+    setSellerInput('');
+  }
+
+  function addSeller() {
+    const raw = sellerInput.trim();
+    if (!raw) return;
+    const handle = raw.startsWith('@') ? raw : `@${raw}`;
+    if (form.sellers.find((s) => s.handle === handle)) {
+      setSellerInput('');
+      return;
+    }
+    const name = handle.replace('@', '').replace(/_/g, ' ');
+    setForm((prev) => ({ ...prev, sellers: [...prev.sellers, { handle, name }] }));
+    setSellerInput('');
+  }
+
+  function removeSeller(handle) {
+    setForm((prev) => ({ ...prev, sellers: prev.sellers.filter((s) => s.handle !== handle) }));
   }
 
   function handleSave() {
     if (!form.title.trim()) return;
     if (formMode === 'create') {
       const newEv = {
-        id: `EV${String(events.length + 1).padStart(3, '0')}`,
+        id: Math.random().toString(36).slice(2, 6).toUpperCase(),
         ...form,
-        showCount: 0,
-        bannerUrl: '',
       };
       setEvents((prev) => [...prev, newEv]);
     } else {
@@ -53,125 +82,180 @@ export default function EventsPage() {
     closeForm();
   }
 
-  return (
-    <>
-      <div className="filter-bar">
-        <div className="filter-group">
-          <span className="filter-label">상태</span>
-          {STATUS_FILTERS.map((s) => (
-            <button
-              key={s}
-              className={`chip${statusFilter === s ? ' active' : ''}`}
-              onClick={() => setStatusFilter(s)}
-            >
-              {s === 'all' ? '전체' : STATUS_LABELS[s]}
-            </button>
-          ))}
-        </div>
-        <div className="filter-right">
-          <button className="btn btn-primary btn-sm" onClick={openCreate}>+ 기획전 추가</button>
-        </div>
-      </div>
-
-      {formMode && (
+  if (formMode) {
+    return (
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <div className="form-panel">
-          <div className="form-panel-title">{formMode === 'create' ? '새 기획전' : '기획전 수정'}</div>
+          <div className="form-panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>{formMode === 'create' ? 'Add New Unit' : 'Edit Unit'}</span>
+            <button className="link" onClick={closeForm} style={{ fontSize: 13, color: 'var(--muted)' }}>Cancel</button>
+          </div>
           <div className="form-panel-body">
-            <div className="form-row">
-              <label className="form-label">제목 <span className="required">*</span></label>
-              <input
-                className="inp inp-full"
-                value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="기획전 제목"
-              />
-            </div>
-            <div className="form-row">
-              <label className="form-label">설명</label>
-              <textarea
-                className="inp inp-full"
-                rows={2}
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder="기획전 설명"
-              />
-            </div>
-            <div className="form-row cols">
-              <div className="form-col">
-                <label className="form-label">시작일시</label>
-                <input
-                  className="inp inp-full"
-                  type="datetime-local"
-                  value={form.startDate}
-                  onChange={(e) => setForm({ ...form, startDate: e.target.value })}
-                />
+            <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+              {/* Left column */}
+              <div style={{ flex: '1 1 320px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div className="form-col">
+                  <label className="form-label">UNIT TITLE <span className="required">*</span></label>
+                  <input
+                    className="inp inp-full"
+                    style={{ height: 40, fontSize: 13 }}
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    placeholder="기획전 제목을 입력하세요"
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <div className="form-col">
+                    <label className="form-label">START DATE <span className="required">*</span></label>
+                    <input
+                      className="inp inp-full"
+                      style={{ height: 40, fontSize: 13 }}
+                      type="datetime-local"
+                      value={form.startDate}
+                      onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-col">
+                    <label className="form-label">END DATE <span className="required">*</span></label>
+                    <input
+                      className="inp inp-full"
+                      style={{ height: 40, fontSize: 13 }}
+                      type="datetime-local"
+                      value={form.endDate}
+                      onChange={(e) => setForm({ ...form, endDate: e.target.value })}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="form-col">
-                <label className="form-label">종료일시</label>
-                <input
-                  className="inp inp-full"
-                  type="datetime-local"
-                  value={form.endDate}
-                  onChange={(e) => setForm({ ...form, endDate: e.target.value })}
-                />
-              </div>
-              <div className="form-col" style={{ maxWidth: 140 }}>
-                <label className="form-label">상태</label>
-                <select
-                  className="inp"
-                  value={form.status}
-                  onChange={(e) => setForm({ ...form, status: e.target.value })}
-                >
-                  <option value="scheduled">예정</option>
-                  <option value="live">진행중</option>
-                  <option value="done">종료</option>
-                </select>
+
+              {/* Right column — seller management */}
+              <div style={{ flex: '1 1 280px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <label className="form-label">MANAGE SELLERS</label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <input
+                    className="inp inp-full"
+                    style={{ height: 40, fontSize: 13 }}
+                    placeholder="Enter seller handle (e.g. @posh_seller)"
+                    value={sellerInput}
+                    onChange={(e) => setSellerInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addSeller()}
+                  />
+                  <button
+                    className="btn btn-primary"
+                    style={{ height: 40, padding: '0 18px', fontSize: 13 }}
+                    onClick={addSeller}
+                  >
+                    Add
+                  </button>
+                </div>
+                {form.sellers.length > 0 && (
+                  <div style={{ border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden' }}>
+                    {form.sellers.map((seller) => (
+                      <div
+                        key={seller.handle}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 10,
+                          padding: '10px 12px', borderBottom: '1px solid var(--border-light)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 36, height: 36, borderRadius: '50%',
+                            background: randomColor(seller.handle),
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 11, fontWeight: 700, color: '#555', flexShrink: 0,
+                          }}
+                        >
+                          {initials(seller.handle)}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 600, fontSize: 13 }}>{seller.name}</div>
+                          <div style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--muted)' }}>{seller.handle}</div>
+                        </div>
+                        <button
+                          onClick={() => removeSeller(seller.handle)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: 15, padding: '2px 4px' }}
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
           <div className="form-panel-footer">
             <button className="btn btn-secondary" onClick={closeForm}>취소</button>
-            <button className="btn btn-primary" onClick={handleSave}>저장</button>
+            <button className="btn btn-primary" onClick={handleSave}>Save Changes</button>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
 
+  return (
+    <>
       <div className="sec-header">
-        <span className="sec-count">{filtered.length}개 기획전</span>
+        <span className="sec-count">{events.length}개 기획전</span>
+        <button className="btn btn-primary" onClick={openCreate}>+ Add New Unit ({events.length}/10)</button>
       </div>
 
       <table className="tbl">
         <thead>
           <tr>
+            <th style={{ width: 24 }}></th>
             <th>ID</th>
-            <th>제목</th>
-            <th>설명</th>
-            <th>시작일시</th>
-            <th>종료일시</th>
-            <th className="c">상태</th>
-            <th className="r">방송수</th>
-            <th className="c">액션</th>
+            <th>UNIT TITLE</th>
+            <th>START DATE</th>
+            <th>END DATE</th>
+            <th className="c">MANAGE</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.length === 0 && (
-            <tr><td colSpan={8} className="tbl-empty">조회된 기획전이 없습니다.</td></tr>
+          {events.length === 0 && (
+            <tr><td colSpan={6} className="tbl-empty">등록된 기획전이 없습니다.</td></tr>
           )}
-          {filtered.map((ev) => (
+          {events.map((ev, idx) => (
             <tr key={ev.id}>
+              <td style={{ color: 'var(--border)', fontSize: 16, cursor: 'grab', textAlign: 'center' }}>⠿</td>
               <td className="mono">{ev.id}</td>
-              <td><strong>{ev.title}</strong></td>
-              <td className="muted">{ev.description}</td>
+              <td>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                      width: 26, height: 26, borderRadius: 6,
+                      background: '#1e1e1e', color: '#fff',
+                      fontSize: 12, fontWeight: 700, flexShrink: 0,
+                    }}
+                  >
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 13 }}>{ev.title}</div>
+                    <div style={{ fontSize: 11, color: 'var(--muted)' }}>{ev.sellers.length} sellers registered</div>
+                  </div>
+                </div>
+              </td>
               <td className="date">{formatDate(ev.startDate)}</td>
               <td className="date">{formatDate(ev.endDate)}</td>
               <td className="c">
-                <span className={`badge ${STATUS_BADGE_CLASS[ev.status]}`}>{STATUS_LABELS[ev.status]}</span>
-              </td>
-              <td className="r">{ev.showCount}</td>
-              <td className="c">
                 <div className="actions" style={{ justifyContent: 'center' }}>
-                  <button className="btn btn-sm btn-secondary" onClick={() => openEdit(ev)}>수정</button>
-                  <button className="btn btn-sm btn-red" onClick={() => setConfirmDelete(ev)}>삭제</button>
+                  <button
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--muted)', padding: '2px 6px' }}
+                    onClick={() => openEdit(ev)}
+                    title="수정"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--red)', padding: '2px 6px' }}
+                    onClick={() => setConfirmDelete(ev)}
+                    title="삭제"
+                  >
+                    🗑
+                  </button>
                 </div>
               </td>
             </tr>
