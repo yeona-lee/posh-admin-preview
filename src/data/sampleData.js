@@ -1,20 +1,54 @@
 export const SHOWS = [
-  { id: 'SH001', title: '봄 신상 원피스 & 블라우스 특가', handle: '@jieun_style', category: "Women's Apparel", subCategory: 'Contemporary', status: 'live',      startTime: '2026-04-28T14:00', endTime: null,              viewerCount: 342, gmv: 1280000 },
-  { id: 'SH002', title: '나이키 / 아디다스 운동화 한정세일',  handle: '@sneakers_mkt',    category: 'Shoes',           subCategory: 'Sneakers',      status: 'live',      startTime: '2026-04-28T15:30', endTime: null,              viewerCount: 218, gmv: 870000  },
-  { id: 'SH003', title: '명품백 & 지갑 진품보장 특가',       handle: '@luxury_house',    category: 'Bags',            subCategory: 'Luxury Bags',   status: 'scheduled', startTime: '2026-04-28T18:00', endTime: null,              viewerCount: 0,   gmv: 0       },
-  { id: 'SH004', title: '어버이날 선물 홈데코 특가',          handle: '@interior_atelier',category: "Men's Apparel",   subCategory: 'Workwear',      status: 'scheduled', startTime: '2026-04-29T12:00', endTime: null,              viewerCount: 0,   gmv: 0       },
-  { id: 'SH005', title: '봄 뷰티 스킨케어 라이브',            handle: '@beauty_kr',       category: 'Beauty',          subCategory: 'Skincare',      status: 'scheduled', startTime: '2026-04-29T20:00', endTime: null,              viewerCount: 0,   gmv: 0       },
-  { id: 'SH006', title: '빈티지 데님 & 레더 재킷 컬렉션',    handle: '@vintage_closet',  category: "Men's Apparel",   subCategory: 'Vintage',       status: 'done',      startTime: '2026-04-27T20:00', endTime: '2026-04-27T21:45', viewerCount: 512, gmv: 2100000 },
-  { id: 'SH007', title: '봄맞이 홈데코 리빙 소품 할인전',     handle: '@interior_atelier',category: "Women's Apparel", subCategory: 'Vintage',       status: 'done',      startTime: '2026-04-27T15:00', endTime: '2026-04-27T17:30', viewerCount: 891, gmv: 3450000 },
-  { id: 'SH008', title: '키즈 여름 신상 의류 총집합',          handle: '@babymom_store',   category: 'Kids',            subCategory: 'Girls',         status: 'done',      startTime: '2026-04-26T14:00', endTime: '2026-04-26T15:20', viewerCount: 204, gmv: 640000  },
+  { id: 'SH001', title: '봄 신상 원피스 & 블라우스 특가', handle: '@jieun_style',     category: "Women's Apparel", subCategory: 'Contemporary', status: 'live',      startTime: '2026-04-28T14:00', endTime: null,               viewerCount: 342, gmv: 1280000, chatModerators: ['@mod_alice'] },
+  { id: 'SH002', title: '나이키 / 아디다스 운동화 한정세일', handle: '@sneakers_mkt', category: 'Shoes',           subCategory: 'Sneakers',     status: 'live',      startTime: '2026-04-28T15:30', endTime: null,               viewerCount: 218, gmv: 870000,  chatModerators: [] },
+  { id: 'SH003', title: '명품백 & 지갑 진품보장 특가',      handle: '@luxury_house',  category: 'Bags',            subCategory: 'Luxury Bags',  status: 'scheduled', startTime: '2026-04-28T18:00', endTime: null,               viewerCount: 0,   gmv: 0,       chatModerators: ['@mod_bob', '@mod_carol'] },
+  { id: 'SH004', title: '어버이날 선물 홈데코 특가',         handle: '@interior_atelier', category: "Men's Apparel", subCategory: 'Workwear',    status: 'scheduled', startTime: '2026-04-29T12:00', endTime: null,               viewerCount: 0,   gmv: 0,       chatModerators: [] },
+  { id: 'SH005', title: '봄 뷰티 스킨케어 라이브',           handle: '@beauty_kr',     category: 'Beauty',          subCategory: 'Skincare',     status: 'scheduled', startTime: '2026-04-29T20:00', endTime: null,               viewerCount: 0,   gmv: 0,       chatModerators: [] },
+  { id: 'SH006', title: '빈티지 데님 & 레더 재킷 컬렉션',   handle: '@vintage_closet',category: "Men's Apparel",   subCategory: 'Vintage',      status: 'done',      startTime: '2026-04-27T20:00', endTime: '2026-04-27T21:45', viewerCount: 512, gmv: 2100000, chatModerators: ['@mod_alice'] },
+  { id: 'SH007', title: '봄맞이 홈데코 리빙 소품 할인전',    handle: '@interior_atelier', category: "Women's Apparel", subCategory: 'Vintage',  status: 'done',      startTime: '2026-04-27T15:00', endTime: '2026-04-27T17:30', viewerCount: 891, gmv: 3450000, chatModerators: [] },
+  { id: 'SH008', title: '키즈 여름 신상 의류 총집합',         handle: '@babymom_store', category: 'Kids',            subCategory: 'Girls',        status: 'done',      startTime: '2026-04-26T14:00', endTime: '2026-04-26T15:20', viewerCount: 204, gmv: 640000,  chatModerators: [] },
 ];
 
 export const HOSTS = [
-  { id: 'U001', name: '김지은', handle: '@jieun_style', email: 'jieun@example.com', joinDate: '2024-03-15', showCount: 48, totalGmv: 18500000, status: 'active', penalties: 0, verified: true },
-  { id: 'U002', name: '박준혁', handle: '@sneakers_mkt', email: 'junhyuk@example.com', joinDate: '2023-11-02', showCount: 112, totalGmv: 52300000, status: 'active', penalties: 1, verified: true },
-  { id: 'U003', name: '이수진', handle: '@luxury_house', email: 'sujin@example.com', joinDate: '2024-01-20', showCount: 35, totalGmv: 31200000, status: 'suspended', penalties: 3, verified: false },
-  { id: 'U004', name: '최민준', handle: '@interior_atelier', email: 'minjun@example.com', joinDate: '2023-08-10', showCount: 88, totalGmv: 29700000, status: 'active', penalties: 0, verified: true },
-  { id: 'U005', name: '정하나', handle: '@vintage_closet', email: 'hana@example.com', joinDate: '2024-05-01', showCount: 22, totalGmv: 8900000, status: 'active', penalties: 2, verified: false },
+  {
+    id: 'U001', handle: '@jieun_style', email: 'jieun@example.com',
+    joinDate: '2024-03-15', showCount: 48, seg: 'Gold', status: 'active',
+    penaltyHistory: [],
+  },
+  {
+    id: 'U002', handle: '@sneakers_mkt', email: 'junhyuk@example.com',
+    joinDate: '2023-11-02', showCount: 112, seg: 'Platinum', status: 'active',
+    penaltyHistory: [
+      { date: '2026-03-10', reason: '허위 상품 설명', type: '경고' },
+    ],
+  },
+  {
+    id: 'U003', handle: '@luxury_house', email: 'sujin@example.com',
+    joinDate: '2024-01-20', showCount: 35, seg: 'Silver', status: 'suspended',
+    penaltyHistory: [
+      { date: '2026-01-05', reason: '욕설 및 비방', type: '경고' },
+      { date: '2026-02-18', reason: '반복 규정 위반', type: '일시정지' },
+      { date: '2026-04-01', reason: '가품 판매 의심', type: '계정정지' },
+    ],
+  },
+  {
+    id: 'U004', handle: '@interior_atelier', email: 'minjun@example.com',
+    joinDate: '2023-08-10', showCount: 88, seg: 'Gold', status: 'active',
+    penaltyHistory: [],
+  },
+  {
+    id: 'U005', handle: '@vintage_closet', email: 'hana@example.com',
+    joinDate: '2024-05-01', showCount: 22, seg: 'Bronze', status: 'active',
+    penaltyHistory: [
+      { date: '2026-03-22', reason: '방송 중 부적절 발언', type: '경고' },
+      { date: '2026-04-10', reason: '구매자 환불 거부', type: '경고' },
+    ],
+  },
+  {
+    id: 'U006', handle: '@beauty_kr', email: 'beautykr@example.com',
+    joinDate: '2025-01-10', showCount: 14, seg: 'Bronze', status: 'active',
+    penaltyHistory: [],
+  },
 ];
 
 export const HOST_STATS = [

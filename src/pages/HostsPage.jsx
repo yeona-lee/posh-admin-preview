@@ -1,34 +1,97 @@
-import { useState } from 'react';
-import { HOSTS, STATUS_LABELS, STATUS_BADGE_CLASS } from '../data/sampleData';
+import { useState, useRef, useEffect } from 'react';
+import { HOSTS } from '../data/sampleData';
+
+const SEG_STYLE = {
+  Platinum: { bg: '#e8e4ff', color: '#5b21b6' },
+  Gold:     { bg: '#fef3c7', color: '#b45309' },
+  Silver:   { bg: '#f1f5f9', color: '#475569' },
+  Bronze:   { bg: '#fde8d8', color: '#92400e' },
+};
+
+function avatarBg(handle) {
+  const colors = ['#e0d7f5', '#d7e8f5', '#d7f5e0', '#f5e0d7', '#f5f0d7', '#e0f5f0'];
+  let n = 0;
+  for (const c of handle) n += c.charCodeAt(0);
+  return colors[n % colors.length];
+}
+function avatarText(handle) {
+  return handle.replace('@', '').slice(0, 2).toUpperCase();
+}
+
+/* dropdown that closes when clicking outside */
+function ActionDropdown({ host, onDiscipline }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handler(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false); }
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  return (
+    <div ref={ref} style={{ position: 'relative', display: 'inline-block' }}>
+      <button
+        className="btn btn-sm btn-secondary"
+        onClick={() => setOpen((v) => !v)}
+        style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+      >
+        액션 <span style={{ fontSize: 9 }}>▼</span>
+      </button>
+      {open && (
+        <div style={{
+          position: 'absolute', right: 0, top: 'calc(100% + 4px)',
+          background: '#fff', border: '1px solid var(--border)',
+          borderRadius: 6, boxShadow: '0 4px 16px rgba(0,0,0,.12)',
+          minWidth: 130, zIndex: 100, overflow: 'hidden',
+        }}>
+          <button
+            onClick={() => { setOpen(false); onDiscipline(host); }}
+            style={{
+              display: 'block', width: '100%', padding: '9px 14px',
+              background: 'none', border: 'none', cursor: 'pointer',
+              textAlign: 'left', fontSize: 13, color: 'var(--red)',
+              fontWeight: 600, fontFamily: 'inherit',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.background = '#fee2e2'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+          >
+            셀러 징계
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function HostsPage() {
   const [search, setSearch] = useState('');
   const [hosts, setHosts] = useState(HOSTS);
-  const [confirmModal, setConfirmModal] = useState(null);
+  const [penaltyModal, setPenaltyModal] = useState(null);   // host object
+  const [disciplineModal, setDisciplineModal] = useState(null); // host object
+  const [disciplineForm, setDisciplineForm] = useState({ type: '경고', reason: '' });
 
   const filtered = hosts.filter((h) => {
     if (!search) return true;
-    return h.name.includes(search) || h.handle.includes(search) || h.email.includes(search);
+    const q = search.toLowerCase();
+    return h.handle.toLowerCase().includes(q) || h.email.toLowerCase().includes(q);
   });
 
-  function handleSuspend(host) {
-    const isSuspending = host.status === 'active';
-    setConfirmModal({
-      type: isSuspending ? 'danger' : 'default',
-      title: isSuspending ? '계정 정지' : '정지 해제',
-      message: isSuspending
-        ? `${host.name}(${host.handle}) 계정을 정지하시겠습니까?`
-        : `${host.name}(${host.handle}) 계정 정지를 해제하시겠습니까?`,
-      detail: isSuspending ? '정지 중에는 라이브 방송이 불가합니다.' : '계정이 정상 상태로 전환됩니다.',
-      onConfirm: () => {
-        setHosts((prev) =>
-          prev.map((h) =>
-            h.id === host.id ? { ...h, status: isSuspending ? 'suspended' : 'active' } : h
-          )
-        );
-        setConfirmModal(null);
-      },
-    });
+  function submitDiscipline() {
+    if (!disciplineForm.reason.trim()) return;
+    setHosts((prev) => prev.map((h) =>
+      h.id === disciplineModal.id
+        ? {
+            ...h,
+            penaltyHistory: [
+              ...h.penaltyHistory,
+              { date: new Date().toISOString().slice(0, 10), reason: disciplineForm.reason, type: disciplineForm.type },
+            ],
+          }
+        : h
+    ));
+    setDisciplineModal(null);
+    setDisciplineForm({ type: '경고', reason: '' });
   }
 
   return (
@@ -37,7 +100,7 @@ export default function HostsPage() {
         <div className="filter-group filter-right">
           <input
             className="inp inp-search"
-            placeholder="이름 / 핸들 / 이메일 검색"
+            placeholder="핸들 / 이메일 검색"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -54,77 +117,164 @@ export default function HostsPage() {
             <th>호스트</th>
             <th>이메일</th>
             <th>가입일</th>
-            <th className="r">방송수</th>
-            <th className="r">총 GMV</th>
+            <th className="r">총 방송수</th>
+            <th className="c">SEG</th>
             <th className="c">패널티</th>
-            <th className="c">인증</th>
-            <th className="c">상태</th>
             <th className="c">액션</th>
           </tr>
         </thead>
         <tbody>
           {filtered.length === 0 && (
-            <tr><td colSpan={9} className="tbl-empty">조회된 호스트가 없습니다.</td></tr>
+            <tr><td colSpan={7} className="tbl-empty">조회된 호스트가 없습니다.</td></tr>
           )}
-          {filtered.map((host) => (
-            <tr key={host.id}>
-              <td>
-                <div className="user-cell">
-                  <div className="avatar">{host.name[0]}</div>
-                  <div>
-                    <div className="user-name">{host.name}</div>
-                    <div className="user-handle">{host.handle}</div>
+          {filtered.map((host) => {
+            const penaltyCount = host.penaltyHistory.length;
+            const seg = SEG_STYLE[host.seg] || SEG_STYLE.Bronze;
+            return (
+              <tr key={host.id}>
+                {/* 셀러 */}
+                <td>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                      background: avatarBg(host.handle),
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 11, fontWeight: 700, color: '#555',
+                    }}>
+                      {avatarText(host.handle)}
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--burgundy)' }}>{host.handle}</span>
                   </div>
-                </div>
-              </td>
-              <td className="muted">{host.email}</td>
-              <td className="date">{host.joinDate}</td>
-              <td className="r">{host.showCount}</td>
-              <td className="r">{host.totalGmv.toLocaleString('ko-KR')}원</td>
-              <td className="c">
-                {host.penalties > 0
-                  ? <span className="badge badge-live">{host.penalties}건</span>
-                  : <span className="badge badge-done">없음</span>}
-              </td>
-              <td className="c">
-                {host.verified
-                  ? <span className="badge badge-done">인증</span>
-                  : <span className="badge badge-grey">미인증</span>}
-              </td>
-              <td className="c">
-                <span className={`badge ${STATUS_BADGE_CLASS[host.status]}`}>{STATUS_LABELS[host.status]}</span>
-              </td>
-              <td className="c">
-                <button
-                  className={`btn btn-sm ${host.status === 'active' ? 'btn-red' : 'btn-green'}`}
-                  onClick={() => handleSuspend(host)}
-                >
-                  {host.status === 'active' ? '정지' : '해제'}
-                </button>
-              </td>
-            </tr>
-          ))}
+                </td>
+
+                {/* 이메일 */}
+                <td className="muted" style={{ fontSize: 12 }}>{host.email}</td>
+
+                {/* 가입일 */}
+                <td className="date">{host.joinDate}</td>
+
+                {/* 방송수 */}
+                <td className="r">{host.showCount}회</td>
+
+                {/* SEG */}
+                <td className="c">
+                  <span style={{
+                    display: 'inline-block', padding: '2px 9px',
+                    borderRadius: 10, fontSize: 11, fontWeight: 700,
+                    background: seg.bg, color: seg.color,
+                  }}>
+                    {host.seg}
+                  </span>
+                </td>
+
+                {/* 패널티 */}
+                <td className="c">
+                  {penaltyCount === 0 ? (
+                    <span style={{ fontSize: 12, color: 'var(--muted)' }}>없음</span>
+                  ) : (
+                    <button
+                      className="link"
+                      style={{ color: 'var(--red)', fontWeight: 700, fontSize: 12 }}
+                      onClick={() => setPenaltyModal(host)}
+                    >
+                      {penaltyCount}건
+                    </button>
+                  )}
+                </td>
+
+                {/* 액션 */}
+                <td className="c">
+                  <ActionDropdown host={host} onDiscipline={setDisciplineModal} />
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
-      {confirmModal && (
-        <div className="overlay" onClick={() => setConfirmModal(null)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
+      {/* ── 패널티 이력 모달 ── */}
+      {penaltyModal && (
+        <div className="overlay" onClick={() => setPenaltyModal(null)}>
+          <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">{confirmModal.title}</span>
-              <button className="modal-close" onClick={() => setConfirmModal(null)}>✕</button>
+              <span className="modal-title">패널티 이력 — {penaltyModal.handle}</span>
+              <button className="modal-close" onClick={() => setPenaltyModal(null)}>✕</button>
             </div>
-            <div className="modal-body">
-              <p className="modal-msg">{confirmModal.message}</p>
-              {confirmModal.detail && <div className="modal-detail">{confirmModal.detail}</div>}
+            <div className="modal-body" style={{ padding: 0 }}>
+              <table className="tbl" style={{ marginBottom: 0 }}>
+                <thead>
+                  <tr>
+                    <th>일자</th>
+                    <th>유형</th>
+                    <th>사유</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {penaltyModal.penaltyHistory.map((p, i) => (
+                    <tr key={i}>
+                      <td className="date">{p.date}</td>
+                      <td>
+                        <span className={`badge ${p.type === '경고' ? 'badge-amber' : p.type === '일시정지' ? 'badge-scheduled' : 'badge-live'}`}>
+                          {p.type}
+                        </span>
+                      </td>
+                      <td>{p.reason}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmModal(null)}>취소</button>
+              <button className="btn btn-secondary" onClick={() => setPenaltyModal(null)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 셀러 징계 모달 ── */}
+      {disciplineModal && (
+        <div className="overlay" onClick={() => setDisciplineModal(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <span className="modal-title">셀러 징계 — {disciplineModal.handle}</span>
+              <button className="modal-close" onClick={() => setDisciplineModal(null)}>✕</button>
+            </div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div className="form-col">
+                <label className="form-label">징계 유형</label>
+                <select
+                  className="inp"
+                  value={disciplineForm.type}
+                  onChange={(e) => setDisciplineForm((p) => ({ ...p, type: e.target.value }))}
+                  style={{ width: '100%' }}
+                >
+                  <option value="경고">경고</option>
+                  <option value="일시정지">일시정지</option>
+                  <option value="계정정지">계정정지</option>
+                </select>
+              </div>
+              <div className="form-col">
+                <label className="form-label">징계 사유 <span className="required">*</span></label>
+                <textarea
+                  className="inp inp-full"
+                  rows={3}
+                  placeholder="징계 사유를 입력하세요"
+                  value={disciplineForm.reason}
+                  onChange={(e) => setDisciplineForm((p) => ({ ...p, reason: e.target.value }))}
+                />
+              </div>
+              <div className="modal-detail" style={{ marginTop: 0 }}>
+                징계 처리 시 해당 셀러에게 알림이 발송됩니다.
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setDisciplineModal(null)}>취소</button>
               <button
-                className={`btn ${confirmModal.type === 'danger' ? 'btn-red' : 'btn-primary'}`}
-                onClick={confirmModal.onConfirm}
+                className="btn btn-red"
+                onClick={submitDiscipline}
+                disabled={!disciplineForm.reason.trim()}
               >
-                확인
+                징계 적용
               </button>
             </div>
           </div>

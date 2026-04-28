@@ -1,14 +1,7 @@
 import { useState } from 'react';
 import { SHOWS, STATUS_LABELS, STATUS_BADGE_CLASS } from '../data/sampleData';
 
-/* status sort priority: live → scheduled → done */
 const STATUS_ORDER = { live: 0, scheduled: 1, done: 2 };
-const SORT_TABS = [
-  { key: 'all',       label: '전체' },
-  { key: 'live',      label: '진행중' },
-  { key: 'scheduled', label: '예정' },
-  { key: 'done',      label: '종료' },
-];
 
 function formatTime(iso) {
   if (!iso) return '–';
@@ -23,38 +16,96 @@ function avatarBg(handle) {
   for (const c of handle) n += c.charCodeAt(0);
   return colors[n % colors.length];
 }
-
 function avatarText(handle) {
   return handle.replace('@', '').slice(0, 2).toUpperCase();
 }
 
-/* grayed-out "coming soon" button */
 function PlannedBtn({ label }) {
   return (
-    <button
-      className="btn btn-sm btn-ghost"
-      disabled
-      title="준비 중"
-      style={{ opacity: 0.55, cursor: 'not-allowed', position: 'relative' }}
-    >
+    <button className="btn btn-sm btn-ghost" disabled style={{ opacity: 0.5, cursor: 'not-allowed' }}>
       {label}
-      <span style={{
-        fontSize: 9, fontWeight: 700, color: 'var(--muted)',
-        marginLeft: 4, verticalAlign: 'middle',
-      }}>예정</span>
+      <span style={{ fontSize: 9, marginLeft: 4, color: 'var(--muted)' }}>예정</span>
     </button>
   );
 }
 
+/* 채팅관리자 셀 */
+function ChatModCell({ show, onUpdate }) {
+  const [adding, setAdding] = useState(false);
+  const [input, setInput] = useState('');
+
+  function confirm() {
+    const val = input.trim();
+    if (!val) { setAdding(false); return; }
+    const handle = val.startsWith('@') ? val : `@${val}`;
+    onUpdate(show.id, [...show.chatModerators, handle]);
+    setInput('');
+    setAdding(false);
+  }
+
+  function remove(handle) {
+    onUpdate(show.id, show.chatModerators.filter((m) => m !== handle));
+  }
+
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center', minWidth: 120 }}>
+      {show.chatModerators.map((mod) => (
+        <span
+          key={mod}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 3,
+            background: '#f3f4f6', border: '1px solid var(--border)',
+            borderRadius: 10, padding: '1px 8px',
+            fontSize: 11, color: '#444',
+          }}
+        >
+          {mod}
+          <button
+            onClick={() => remove(mod)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: 12, padding: 0, lineHeight: 1 }}
+          >×</button>
+        </span>
+      ))}
+
+      {adding ? (
+        <input
+          autoFocus
+          className="inp"
+          style={{ width: 110, height: 22, fontSize: 11, padding: '0 6px' }}
+          placeholder="@handle"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') setAdding(false); }}
+          onBlur={confirm}
+        />
+      ) : (
+        <button
+          onClick={() => setAdding(true)}
+          style={{
+            width: 20, height: 20, borderRadius: '50%',
+            background: 'var(--burgundy)', color: '#fff',
+            border: 'none', cursor: 'pointer', fontSize: 14, lineHeight: 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}
+        >+</button>
+      )}
+    </div>
+  );
+}
+
 export default function ShowsPage() {
-  const [sortKey, setSortKey] = useState('all');
-  const [search, setSearch] = useState('');
+  const [sortStatus, setSortStatus] = useState('all');
+  const [search, setSearch]         = useState('');
+  const [shows, setShows]           = useState(SHOWS);
   const [statsModal, setStatsModal] = useState(null);
-  const [shows] = useState(SHOWS);
+
+  function updateModerators(showId, mods) {
+    setShows((prev) => prev.map((s) => s.id === showId ? { ...s, chatModerators: mods } : s));
+  }
 
   const list = shows
     .filter((s) => {
-      if (sortKey !== 'all' && s.status !== sortKey) return false;
+      if (sortStatus !== 'all' && s.status !== sortStatus) return false;
       if (search) {
         const q = search.toLowerCase();
         return s.handle.toLowerCase().includes(q) || s.title.toLowerCase().includes(q);
@@ -65,24 +116,21 @@ export default function ShowsPage() {
 
   return (
     <>
-      {/* ── Sort bar ── */}
+      {/* ── Filter bar ── */}
       <div className="filter-bar">
         <div className="filter-group">
-          <span className="filter-label">정렬</span>
-          {SORT_TABS.map((tab) => (
-            <button
-              key={tab.key}
-              className={`chip${sortKey === tab.key ? ' active' : ''}`}
-              onClick={() => setSortKey(tab.key)}
-            >
-              {tab.label}
-              {tab.key !== 'all' && (
-                <span style={{ marginLeft: 5, opacity: 0.75 }}>
-                  ({shows.filter((s) => s.status === tab.key).length})
-                </span>
-              )}
-            </button>
-          ))}
+          <label className="filter-label">상태</label>
+          <select
+            className="inp"
+            style={{ width: 110 }}
+            value={sortStatus}
+            onChange={(e) => setSortStatus(e.target.value)}
+          >
+            <option value="all">전체</option>
+            <option value="live">진행중</option>
+            <option value="scheduled">예정</option>
+            <option value="done">종료</option>
+          </select>
         </div>
         <div className="filter-group filter-right">
           <input
@@ -108,17 +156,18 @@ export default function ShowsPage() {
             <th className="c">상태</th>
             <th>시작시간</th>
             <th>종료시간</th>
+            <th>채팅관리자</th>
             <th className="c">액션</th>
           </tr>
         </thead>
         <tbody>
           {list.length === 0 && (
-            <tr><td colSpan={8} className="tbl-empty">조회된 방송이 없습니다.</td></tr>
+            <tr><td colSpan={9} className="tbl-empty">조회된 방송이 없습니다.</td></tr>
           )}
           {list.map((show) => (
             <tr key={show.id}>
               <td className="mono">{show.id}</td>
-              <td style={{ maxWidth: 220 }}>
+              <td style={{ maxWidth: 200 }}>
                 <span style={{ fontWeight: 600, fontSize: 13 }}>{show.title}</span>
               </td>
               <td>
@@ -135,7 +184,7 @@ export default function ShowsPage() {
                 </div>
               </td>
               <td>
-                <div style={{ lineHeight: 1.4 }}>
+                <div style={{ lineHeight: 1.5 }}>
                   <div style={{ fontSize: 12, fontWeight: 600 }}>{show.category}</div>
                   <div style={{ fontSize: 11, color: 'var(--muted)' }}>{show.subCategory}</div>
                 </div>
@@ -148,13 +197,11 @@ export default function ShowsPage() {
               <td className="date">{formatTime(show.startTime)}</td>
               <td className="date">{formatTime(show.endTime)}</td>
               <td>
+                <ChatModCell show={show} onUpdate={updateModerators} />
+              </td>
+              <td>
                 <div className="actions">
-                  <button
-                    className="btn btn-sm btn-blue"
-                    onClick={() => setStatsModal(show)}
-                  >
-                    통계
-                  </button>
+                  <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>통계</button>
                   <PlannedBtn label="미노출" />
                   <PlannedBtn label="삭제" />
                   <PlannedBtn label="채팅관리" />
@@ -165,7 +212,7 @@ export default function ShowsPage() {
         </tbody>
       </table>
 
-      {/* ── Stats modal ── */}
+      {/* ── 통계 모달 ── */}
       {statsModal && (
         <div className="overlay" onClick={() => setStatsModal(null)}>
           <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
