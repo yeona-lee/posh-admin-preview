@@ -1,11 +1,10 @@
 import { NavLink, useLocation } from 'react-router-dom';
 
 const TAB_TITLES = {
-  '/shows': '쇼 모니터링',
-  '/hosts': '호스트 관리',
-  '/stats': '통계 분석',
-  '/categories': '카테고리 관리',
-  '/events': '기획전 관리',
+  '/shows':      'Show Monitor',
+  '/hosts':      'Host Management',
+  '/categories': 'Category Management',
+  '/events':     'Event Management',
 };
 
 function AdminLayout({ tabs, children }) {

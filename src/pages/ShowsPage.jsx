@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { SHOWS, STATUS_LABELS, STATUS_BADGE_CLASS } from '../data/sampleData';
+import { SHOWS, STATUS_BADGE_CLASS } from '../data/sampleData';
 
 const STATUS_ORDER = { live: 0, scheduled: 1, done: 2 };
+const STATUS_LABEL = { live: 'Live', scheduled: 'Scheduled', done: 'Ended' };
 
 function formatTime(iso) {
   if (!iso) return '–';
-  return new Date(iso).toLocaleString('ko-KR', {
-    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
+  return new Date(iso).toLocaleString('en-US', {
+    month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
   });
 }
 
@@ -24,12 +25,11 @@ function PlannedBtn({ label }) {
   return (
     <button className="btn btn-sm btn-ghost" disabled style={{ opacity: 0.5, cursor: 'not-allowed' }}>
       {label}
-      <span style={{ fontSize: 9, marginLeft: 4, color: 'var(--muted)' }}>예정</span>
+      <span style={{ fontSize: 9, marginLeft: 4, color: 'var(--muted)' }}>soon</span>
     </button>
   );
 }
 
-/* 채팅관리자 셀 */
 function ChatModCell({ show, onUpdate }) {
   const [adding, setAdding] = useState(false);
   const [input, setInput] = useState('');
@@ -50,27 +50,18 @@ function ChatModCell({ show, onUpdate }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center', minWidth: 120 }}>
       {show.chatModerators.map((mod) => (
-        <span
-          key={mod}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 3,
-            background: '#f3f4f6', border: '1px solid var(--border)',
-            borderRadius: 10, padding: '1px 8px',
-            fontSize: 11, color: '#444',
-          }}
-        >
+        <span key={mod} style={{
+          display: 'inline-flex', alignItems: 'center', gap: 3,
+          background: '#f3f4f6', border: '1px solid var(--border)',
+          borderRadius: 10, padding: '1px 8px', fontSize: 11, color: '#444',
+        }}>
           {mod}
-          <button
-            onClick={() => remove(mod)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: 12, padding: 0, lineHeight: 1 }}
-          >×</button>
+          <button onClick={() => remove(mod)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: 12, padding: 0, lineHeight: 1 }}>×</button>
         </span>
       ))}
-
       {adding ? (
         <input
-          autoFocus
-          className="inp"
+          autoFocus className="inp"
           style={{ width: 110, height: 22, fontSize: 11, padding: '0 6px' }}
           placeholder="@handle"
           value={input}
@@ -94,10 +85,10 @@ function ChatModCell({ show, onUpdate }) {
 }
 
 export default function ShowsPage() {
-  const [sortStatus, setSortStatus] = useState('all');
-  const [search, setSearch]         = useState('');
-  const [shows, setShows]             = useState(SHOWS);
-  const [statsModal, setStatsModal]   = useState(null);
+  const [sortStatus, setSortStatus]       = useState('all');
+  const [search, setSearch]               = useState('');
+  const [shows, setShows]                 = useState(SHOWS);
+  const [statsModal, setStatsModal]       = useState(null);
   const [forceEndModal, setForceEndModal] = useState(null);
 
   function updateModerators(showId, mods) {
@@ -117,53 +108,42 @@ export default function ShowsPage() {
 
   return (
     <>
-      {/* ── Filter bar ── */}
       <div className="filter-bar">
         <div className="filter-group">
-          <label className="filter-label">상태</label>
-          <select
-            className="inp"
-            style={{ width: 110 }}
-            value={sortStatus}
-            onChange={(e) => setSortStatus(e.target.value)}
-          >
-            <option value="all">전체</option>
-            <option value="live">진행중</option>
-            <option value="scheduled">예정</option>
-            <option value="done">종료</option>
+          <label className="filter-label">Status</label>
+          <select className="inp" style={{ width: 120 }} value={sortStatus} onChange={(e) => setSortStatus(e.target.value)}>
+            <option value="all">All</option>
+            <option value="live">Live</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="done">Ended</option>
           </select>
         </div>
         <div className="filter-group filter-right">
-          <input
-            className="inp inp-search"
-            placeholder="셀러 핸들 또는 방송 검색"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <input className="inp inp-search" placeholder="Search by seller handle or title" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
       </div>
 
       <div className="sec-header">
-        <span className="sec-count">{list.length}개 방송</span>
+        <span className="sec-count">{list.length} shows</span>
       </div>
 
       <table className="tbl">
         <thead>
           <tr>
-            <th>방송ID</th>
-            <th>제목</th>
-            <th>셀러</th>
-            <th>카테고리</th>
-            <th className="c">상태</th>
-            <th>시작시간</th>
-            <th>종료시간</th>
-            <th>채팅관리자</th>
-            <th className="c">액션</th>
+            <th>Show ID</th>
+            <th>Title</th>
+            <th>Seller</th>
+            <th>Category</th>
+            <th className="c">Status</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Chat Moderators</th>
+            <th className="c">Actions</th>
           </tr>
         </thead>
         <tbody>
           {list.length === 0 && (
-            <tr><td colSpan={9} className="tbl-empty">조회된 방송이 없습니다.</td></tr>
+            <tr><td colSpan={9} className="tbl-empty">No shows found.</td></tr>
           )}
           {list.map((show) => (
             <tr key={show.id}>
@@ -191,24 +171,20 @@ export default function ShowsPage() {
                 </div>
               </td>
               <td className="c">
-                <span className={`badge ${STATUS_BADGE_CLASS[show.status]}`}>
-                  {STATUS_LABELS[show.status]}
-                </span>
+                <span className={`badge ${STATUS_BADGE_CLASS[show.status]}`}>{STATUS_LABEL[show.status]}</span>
               </td>
               <td className="date">{formatTime(show.startTime)}</td>
               <td className="date">{formatTime(show.endTime)}</td>
-              <td>
-                <ChatModCell show={show} onUpdate={updateModerators} />
-              </td>
+              <td><ChatModCell show={show} onUpdate={updateModerators} /></td>
               <td>
                 <div className="actions">
-                  <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>통계</button>
+                  <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>Stats</button>
                   {show.status === 'live' && (
-                    <button className="btn btn-sm btn-red" onClick={() => setForceEndModal(show)}>강제종료</button>
+                    <button className="btn btn-sm btn-red" onClick={() => setForceEndModal(show)}>Force End</button>
                   )}
-                  <PlannedBtn label="미노출" />
-                  <PlannedBtn label="삭제" />
-                  <PlannedBtn label="채팅관리" />
+                  <PlannedBtn label="Hide" />
+                  <PlannedBtn label="Delete" />
+                  <PlannedBtn label="Chat" />
                 </div>
               </td>
             </tr>
@@ -216,72 +192,61 @@ export default function ShowsPage() {
         </tbody>
       </table>
 
-      {/* ── 강제종료 확인 모달 ── */}
+      {/* Force End modal */}
       {forceEndModal && (
         <div className="overlay" onClick={() => setForceEndModal(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">방송 강제종료</span>
+              <span className="modal-title">Force End Show</span>
               <button className="modal-close" onClick={() => setForceEndModal(null)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="modal-msg">
-                <strong>{forceEndModal.handle}</strong>의 방송을 강제종료하시겠습니까?
-              </p>
-              <p className="modal-msg" style={{ marginTop: 4 }}>
-                "{forceEndModal.title}"
-              </p>
+              <p className="modal-msg">Force-end the live show by <strong>{forceEndModal.handle}</strong>?</p>
+              <p className="modal-msg" style={{ marginTop: 4 }}>"{forceEndModal.title}"</p>
               <div className="modal-detail">
-                강제종료 즉시 방송이 중단되며 시청자에게 종료 안내가 표시됩니다. 이 작업은 되돌릴 수 없습니다.
+                The broadcast will be terminated immediately and viewers will see an end screen. This action cannot be undone.
               </div>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setForceEndModal(null)}>취소</button>
-              <button
-                className="btn btn-red"
-                onClick={() => {
-                  setShows((prev) => prev.map((s) =>
-                    s.id === forceEndModal.id
-                      ? { ...s, status: 'done', endTime: new Date().toISOString().slice(0, 16) }
-                      : s
-                  ));
-                  setForceEndModal(null);
-                }}
-              >
-                강제종료
-              </button>
+              <button className="btn btn-secondary" onClick={() => setForceEndModal(null)}>Cancel</button>
+              <button className="btn btn-red" onClick={() => {
+                setShows((prev) => prev.map((s) =>
+                  s.id === forceEndModal.id
+                    ? { ...s, status: 'done', endTime: new Date().toISOString().slice(0, 16) }
+                    : s
+                ));
+                setForceEndModal(null);
+              }}>Force End</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── 통계 모달 ── */}
+      {/* Stats modal */}
       {statsModal && (
         <div className="overlay" onClick={() => setStatsModal(null)}>
           <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">방송 통계 — {statsModal.title}</span>
+              <span className="modal-title">Show Stats — {statsModal.title}</span>
               <button className="modal-close" onClick={() => setStatsModal(null)}>✕</button>
             </div>
             <div className="modal-body">
               <table className="tbl" style={{ marginBottom: 0 }}>
-                <thead>
-                  <tr><th>항목</th><th className="r">값</th></tr>
-                </thead>
+                <thead><tr><th>Metric</th><th className="r">Value</th></tr></thead>
                 <tbody>
-                  <tr><td>방송 ID</td><td className="r mono">{statsModal.id}</td></tr>
-                  <tr><td>셀러</td><td className="r" style={{ color: 'var(--burgundy)', fontWeight: 600 }}>{statsModal.handle}</td></tr>
-                  <tr><td>카테고리</td><td className="r">{statsModal.category} › {statsModal.subCategory}</td></tr>
-                  <tr><td>상태</td><td className="r">{STATUS_LABELS[statsModal.status]}</td></tr>
-                  <tr><td>최대 동시접속</td><td className="r">{statsModal.viewerCount > 0 ? statsModal.viewerCount.toLocaleString() + '명' : '–'}</td></tr>
-                  <tr><td>총 GMV</td><td className="r">{statsModal.gmv > 0 ? statsModal.gmv.toLocaleString('ko-KR') + '원' : '–'}</td></tr>
-                  <tr><td>시작시간</td><td className="r">{formatTime(statsModal.startTime)}</td></tr>
-                  <tr><td>종료시간</td><td className="r">{formatTime(statsModal.endTime)}</td></tr>
+                  <tr><td>Show ID</td><td className="r mono">{statsModal.id}</td></tr>
+                  <tr><td>Seller</td><td className="r" style={{ color: 'var(--burgundy)', fontWeight: 600 }}>{statsModal.handle}</td></tr>
+                  <tr><td>Category</td><td className="r">{statsModal.category} › {statsModal.subCategory}</td></tr>
+                  <tr><td>Status</td><td className="r">{STATUS_LABEL[statsModal.status]}</td></tr>
+                  <tr><td>Peak Viewers</td><td className="r">{statsModal.viewerCount > 0 ? statsModal.viewerCount.toLocaleString() : '–'}</td></tr>
+                  <tr><td>Total GMV</td><td className="r">{statsModal.gmv > 0 ? '$' + (statsModal.gmv / 1300).toFixed(0).toLocaleString() : '–'}</td></tr>
+                  <tr><td>Start Time</td><td className="r">{formatTime(statsModal.startTime)}</td></tr>
+                  <tr><td>End Time</td><td className="r">{formatTime(statsModal.endTime)}</td></tr>
                 </tbody>
               </table>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setStatsModal(null)}>닫기</button>
+              <button className="btn btn-secondary" onClick={() => setStatsModal(null)}>Close</button>
             </div>
           </div>
         </div>

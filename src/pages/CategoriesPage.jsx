@@ -249,18 +249,18 @@ function LiveCategoryTab() {
         <div className="overlay" onClick={() => setConfirmDel(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">삭제 확인</span>
+              <span className="modal-title">Confirm Delete</span>
               <button className="modal-close" onClick={() => setConfirmDel(null)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="modal-msg">"{confirmDel.target.name}"을 삭제하시겠습니까?</p>
+              <p className="modal-msg">Delete "{confirmDel.target.name}"?</p>
               {confirmDel.type === 'parent' && (
-                <div className="modal-detail">소분류 전체가 함께 삭제됩니다.</div>
+                <div className="modal-detail">All subcategories will also be deleted.</div>
               )}
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>취소</button>
-              <button className="btn btn-red" onClick={confirmDelete}>삭제</button>
+              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>Cancel</button>
+              <button className="btn btn-red" onClick={confirmDelete}>Delete</button>
             </div>
           </div>
         </div>
@@ -367,18 +367,18 @@ function BrandTagsTab() {
         <div className="overlay" onClick={() => setConfirmDel(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">브랜드 태그 삭제</span>
+              <span className="modal-title">Delete Brand Tag</span>
               <button className="modal-close" onClick={() => setConfirmDel(null)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="modal-msg">"{confirmDel.name}" 태그를 삭제하시겠습니까?</p>
+              <p className="modal-msg">Delete tag "{confirmDel.name}"?</p>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>취소</button>
+              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>Cancel</button>
               <button className="btn btn-red" onClick={() => {
                 setTags((p) => p.filter((t) => t.id !== confirmDel.id));
                 setConfirmDel(null);
-              }}>삭제</button>
+              }}>Delete</button>
             </div>
           </div>
         </div>
@@ -449,18 +449,18 @@ function SaleTypeTab() {
         <div className="overlay" onClick={() => setConfirmDel(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">Sale Type 삭제</span>
+              <span className="modal-title">Delete Sale Type</span>
               <button className="modal-close" onClick={() => setConfirmDel(null)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="modal-msg">"{confirmDel.name}"을 삭제하시겠습니까?</p>
+              <p className="modal-msg">Delete "{confirmDel.name}"?</p>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>취소</button>
+              <button className="btn btn-secondary" onClick={() => setConfirmDel(null)}>Cancel</button>
               <button className="btn btn-red" onClick={() => {
                 setTypes((p) => p.filter((t) => t.id !== confirmDel.id));
                 setConfirmDel(null);
-              }}>삭제</button>
+              }}>Delete</button>
             </div>
           </div>
         </div>

@@ -186,7 +186,7 @@ export default function EventsPage() {
             </div>
           </div>
           <div className="form-panel-footer">
-            <button className="btn btn-secondary" onClick={closeForm}>취소</button>
+            <button className="btn btn-secondary" onClick={closeForm}>Cancel</button>
             <button className="btn btn-primary" onClick={handleSave}>Save Changes</button>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function EventsPage() {
   return (
     <>
       <div className="sec-header">
-        <span className="sec-count">{events.length}개 기획전</span>
+        <span className="sec-count">{events.length} events</span>
         <button className="btn btn-primary" onClick={openCreate}>+ Add New Unit ({events.length}/10)</button>
       </div>
 
@@ -214,7 +214,7 @@ export default function EventsPage() {
         </thead>
         <tbody>
           {events.length === 0 && (
-            <tr><td colSpan={6} className="tbl-empty">등록된 기획전이 없습니다.</td></tr>
+            <tr><td colSpan={6} className="tbl-empty">No events found.</td></tr>
           )}
           {events.map((ev, idx) => (
             <tr key={ev.id}>
@@ -245,14 +245,14 @@ export default function EventsPage() {
                   <button
                     style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--muted)', padding: '2px 6px' }}
                     onClick={() => openEdit(ev)}
-                    title="수정"
+                    title="Edit"
                   >
                     ✏️
                   </button>
                   <button
                     style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'var(--red)', padding: '2px 6px' }}
                     onClick={() => setConfirmDelete(ev)}
-                    title="삭제"
+                    title="Delete"
                   >
                     🗑
                   </button>
@@ -267,19 +267,19 @@ export default function EventsPage() {
         <div className="overlay" onClick={() => setConfirmDelete(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">기획전 삭제</span>
+              <span className="modal-title">Delete Event</span>
               <button className="modal-close" onClick={() => setConfirmDelete(null)}>✕</button>
             </div>
             <div className="modal-body">
-              <p className="modal-msg">"{confirmDelete.title}" 기획전을 삭제하시겠습니까?</p>
-              <div className="modal-detail">삭제 후 복구가 불가합니다.</div>
+              <p className="modal-msg">Delete "{confirmDelete.title}"?</p>
+              <div className="modal-detail">This action cannot be undone.</div>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>취소</button>
+              <button className="btn btn-secondary" onClick={() => setConfirmDelete(null)}>Cancel</button>
               <button className="btn btn-red" onClick={() => {
                 setEvents((prev) => prev.filter((e) => e.id !== confirmDelete.id));
                 setConfirmDelete(null);
-              }}>삭제</button>
+              }}>Delete</button>
             </div>
           </div>
         </div>
