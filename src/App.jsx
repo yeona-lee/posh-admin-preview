@@ -5,16 +5,9 @@ import HostsPage from './pages/HostsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import EventsPage from './pages/EventsPage';
 
-const TABS = [
-  { path: '/shows',      label: 'Show Monitor'       },
-  { path: '/hosts',      label: 'Host Management'     },
-  { path: '/categories', label: 'Category Management' },
-  { path: '/events',     label: 'Event Management'    },
-];
-
 function App() {
   return (
-    <AdminLayout tabs={TABS}>
+    <AdminLayout>
       <Routes>
         <Route path="/" element={<Navigate to="/shows" replace />} />
         <Route path="/shows"      element={<ShowsPage />} />
