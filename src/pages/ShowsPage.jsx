@@ -30,56 +30,21 @@ function PlannedBtn({ label }) {
   );
 }
 
-function ChatModCell({ show, onUpdate }) {
-  const [adding, setAdding] = useState(false);
-  const [input, setInput] = useState('');
-
-  function confirm() {
-    const val = input.trim();
-    if (!val) { setAdding(false); return; }
-    const handle = val.startsWith('@') ? val : `@${val}`;
-    onUpdate(show.id, [...show.chatModerators, handle]);
-    setInput('');
-    setAdding(false);
-  }
-
-  function remove(handle) {
-    onUpdate(show.id, show.chatModerators.filter((m) => m !== handle));
-  }
-
+function ChatModCell({ show }) {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center', minWidth: 120 }}>
-      {show.chatModerators.map((mod) => (
-        <span key={mod} style={{
-          display: 'inline-flex', alignItems: 'center', gap: 3,
-          background: '#f3f4f6', border: '1px solid var(--border)',
-          borderRadius: 10, padding: '1px 8px', fontSize: 11, color: '#444',
-        }}>
-          {mod}
-          <button onClick={() => remove(mod)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#aaa', fontSize: 12, padding: 0, lineHeight: 1 }}>×</button>
-        </span>
-      ))}
-      {adding ? (
-        <input
-          autoFocus className="inp"
-          style={{ width: 110, height: 22, fontSize: 11, padding: '0 6px' }}
-          placeholder="@handle"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') confirm(); if (e.key === 'Escape') setAdding(false); }}
-          onBlur={confirm}
-        />
-      ) : (
-        <button
-          onClick={() => setAdding(true)}
-          style={{
-            width: 20, height: 20, borderRadius: '50%',
-            background: 'var(--burgundy)', color: '#fff',
-            border: 'none', cursor: 'pointer', fontSize: 14, lineHeight: 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          }}
-        >+</button>
-      )}
+      {show.chatModerators.length === 0
+        ? <span style={{ fontSize: 11, color: 'var(--muted)' }}>–</span>
+        : show.chatModerators.map((mod) => (
+            <span key={mod} style={{
+              display: 'inline-flex', alignItems: 'center',
+              background: '#f3f4f6', border: '1px solid var(--border)',
+              borderRadius: 10, padding: '1px 8px', fontSize: 11, color: '#444',
+            }}>
+              {mod}
+            </span>
+          ))
+      }
     </div>
   );
 }
@@ -90,10 +55,6 @@ export default function ShowsPage() {
   const [shows, setShows]                 = useState(SHOWS);
   const [statsModal, setStatsModal]       = useState(null);
   const [forceEndModal, setForceEndModal] = useState(null);
-
-  function updateModerators(showId, mods) {
-    setShows((prev) => prev.map((s) => s.id === showId ? { ...s, chatModerators: mods } : s));
-  }
 
   const list = shows
     .filter((s) => {
@@ -175,7 +136,7 @@ export default function ShowsPage() {
               </td>
               <td className="date">{formatTime(show.startTime)}</td>
               <td className="date">{formatTime(show.endTime)}</td>
-              <td><ChatModCell show={show} onUpdate={updateModerators} /></td>
+              <td><ChatModCell show={show} /></td>
               <td>
                 <div className="actions">
                   <button className="btn btn-sm btn-blue" onClick={() => setStatsModal(show)}>Stats</button>
