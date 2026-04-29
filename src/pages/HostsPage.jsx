@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { HOSTS } from '../data/sampleData';
 
 const SEG_STYLE = {
-  Platinum: { bg: '#e8e4ff', color: '#5b21b6' },
-  Gold:     { bg: '#fef3c7', color: '#b45309' },
-  Silver:   { bg: '#f1f5f9', color: '#475569' },
-  Bronze:   { bg: '#fde8d8', color: '#92400e' },
+  5: { bg: '#e8e4ff', color: '#5b21b6' },
+  4: { bg: '#fef3c7', color: '#b45309' },
+  3: { bg: '#f1f5f9', color: '#475569' },
+  2: { bg: '#fde8d8', color: '#92400e' },
+  1: { bg: '#f3f4f6', color: '#888'    },
 };
 
 const PENALTY_TYPE_BADGE = {
@@ -146,7 +147,7 @@ export default function HostsPage() {
           )}
           {filtered.map((host) => {
             const penaltyCount = host.penaltyHistory.length;
-            const seg = SEG_STYLE[host.seg] || SEG_STYLE.Bronze;
+            const seg = SEG_STYLE[host.seg] || SEG_STYLE[1];
             return (
               <tr key={host.id}>
                 <td>
@@ -258,7 +259,7 @@ export default function HostsPage() {
             <div className="modal-body">
               <div className="detail-grid" style={{ marginBottom: 16 }}>
                 <StatCard label="Total Shows" value={dashboardModal.showCount} />
-                <StatCard label="SEG Level" value={dashboardModal.seg} />
+                <StatCard label="SEG Level" value={`Lv.${dashboardModal.seg}`} />
                 <StatCard label="Penalties" value={dashboardModal.penaltyHistory.length} sub={dashboardModal.penaltyHistory.length === 0 ? 'Clean record' : 'Cases on record'} />
                 <StatCard label="Member Since" value={dashboardModal.joinDate} />
               </div>
@@ -269,7 +270,7 @@ export default function HostsPage() {
                   <tr><td>Email</td><td className="r">{dashboardModal.email}</td></tr>
                   <tr><td>Join Date</td><td className="r">{dashboardModal.joinDate}</td></tr>
                   <tr><td>Total Shows</td><td className="r">{dashboardModal.showCount}</td></tr>
-                  <tr><td>SEG</td><td className="r">{dashboardModal.seg}</td></tr>
+                  <tr><td>SEG</td><td className="r">Lv.{dashboardModal.seg}</td></tr>
                   <tr><td>Penalty Count</td><td className="r">{dashboardModal.penaltyHistory.length}</td></tr>
                 </tbody>
               </table>

@@ -2,17 +2,17 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
 
 const MENU_ITEMS = [
-  { path: '/shows',      label: 'Show Monitor'       },
-  { path: '/hosts',      label: 'Host Management'     },
-  { path: '/categories', label: 'Category Management' },
-  { path: '/events',     label: 'Event Management'    },
+  { path: '/shows',      label: 'Show Monitor'         },
+  { path: '/hosts',      label: 'Host Management'       },
+  { path: '/categories', label: 'Category Management'   },
+  { path: '/events',     label: 'Show Unit Management'  },
 ];
 
 const PAGE_TITLE = {
   '/shows':      'Show Monitor',
   '/hosts':      'Host Management',
   '/categories': 'Category Management',
-  '/events':     'Event Management',
+  '/events':     'Show Unit Management',
 };
 
 function PoshLiveDropdown() {
