@@ -282,6 +282,98 @@ select.inp   { height: 28px; }
 }
 .mini-card-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
 
+/* ── For You feed: tabs ── */
+.tabs {
+  display: flex; gap: 4px; margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
+  padding: 8px 16px 10px; background: none; border: none;
+  border-bottom: 3px solid transparent; cursor: pointer; font-family: inherit;
+  margin-bottom: -1px;
+}
+.tab-label { font-size: 14px; font-weight: 700; color: var(--muted); }
+.tab-sub   { font-size: 9.5px; color: #bbb; text-transform: uppercase; letter-spacing: .5px; }
+.tab:hover .tab-label { color: var(--text); }
+.tab.active { border-bottom-color: var(--burgundy); }
+.tab.active .tab-label { color: var(--burgundy); }
+
+/* ── Layout: editor + sticky preview ── */
+.feed-layout { display: flex; gap: 22px; align-items: flex-start; }
+.feed-main { flex: 1 1 600px; min-width: 0; }
+.feed-side { flex: 0 0 320px; position: sticky; top: 16px; }
+@media (max-width: 1100px) { .feed-side { display: none; } }
+
+/* ── Toggle switch ── */
+.toggle {
+  position: relative; width: 36px; height: 20px; border-radius: 10px;
+  background: var(--border); border: none; cursor: pointer; transition: background .15s;
+  flex-shrink: 0; display: inline-block; vertical-align: middle;
+}
+.toggle.on { background: var(--green); }
+.toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .15s;
+}
+.toggle.on::after { transform: translateX(16px); }
+
+/* ── Reorder buttons ── */
+.sortbtns { display: inline-flex; flex-direction: column; gap: 1px; }
+.sortbtn {
+  width: 18px; height: 13px; line-height: 11px; text-align: center;
+  border: 1px solid var(--border); background: #fff; cursor: pointer;
+  font-size: 7px; color: var(--muted); padding: 0; border-radius: 3px;
+}
+.sortbtn:hover:not(:disabled) { background: #f0f0f0; color: var(--text); }
+.sortbtn:disabled { opacity: .3; cursor: not-allowed; }
+
+/* ── Segmented control ── */
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.seg button {
+  padding: 7px 14px; background: #fff; border: none; border-right: 1px solid var(--border);
+  font-family: inherit; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;
+}
+.seg button:last-child { border-right: none; }
+.seg button.on { background: var(--burgundy); color: #fff; }
+
+/* ── Color swatch ── */
+.swatch {
+  width: 24px; height: 24px; border-radius: 5px; border: 1px solid rgba(0,0,0,.18);
+  cursor: pointer; padding: 0; flex-shrink: 0;
+}
+.swatch.sel { box-shadow: 0 0 0 2px var(--burgundy); }
+
+/* ── Dropzone ── */
+.dropzone {
+  display: block; border: 1.5px dashed var(--border); border-radius: 6px;
+  padding: 14px; text-align: center; color: var(--muted); font-size: 12px;
+  cursor: pointer; background: #fafafa;
+}
+.dropzone:hover { border-color: var(--burgundy); background: #fff; }
+
+/* ── Phone preview ── */
+.phone {
+  width: 320px; background: #111; border-radius: 30px; padding: 9px;
+  box-shadow: 0 12px 44px rgba(0,0,0,.28);
+}
+.phone-screen {
+  background: #fff; border-radius: 22px; overflow: hidden;
+  height: 600px; overflow-y: auto;
+}
+.phone-screen::-webkit-scrollbar { width: 0; }
+.phone-hd {
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px; font-size: 16px; border-bottom: 1px solid #eee; color: #111;
+}
+.phone-tabs { display: flex; gap: 18px; padding: 10px 14px 6px; font-size: 13px; color: #999; }
+.phone-tabs .on { color: #111; font-weight: 700; border-bottom: 2px solid #111; padding-bottom: 2px; }
+.phone-sec { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #111; }
+.phone-empty {
+  font-size: 11px; color: #aaa; padding: 18px; text-align: center;
+  border: 1px dashed #ddd; border-radius: 8px; width: 100%;
+}
+
 /* ── Animations ── */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateX(-50%) translateY(12px); }

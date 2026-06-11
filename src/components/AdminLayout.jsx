@@ -5,14 +5,14 @@ const MENU_ITEMS = [
   { path: '/shows',      label: 'Show Monitor'         },
   { path: '/hosts',      label: 'Host Management'       },
   { path: '/categories', label: 'Category Management'   },
-  { path: '/events',     label: 'Show Unit Management'  },
+  { path: '/events',     label: 'For You Feed'          },
 ];
 
 const PAGE_TITLE = {
   '/shows':      'Show Monitor',
   '/hosts':      'Host Management',
   '/categories': 'Category Management',
-  '/events':     'Show Unit Management',
+  '/events':     'For You Feed Management',
 };
 
 function PoshLiveDropdown() {

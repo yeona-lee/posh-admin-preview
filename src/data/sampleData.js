@@ -7,6 +7,9 @@ export const SHOWS = [
   { id: 'SH006', title: 'Vintage Denim & Leather Jacket Collection',   handle: '@vintage_closet',   category: "Men's Apparel",   subCategory: 'Vintage',      status: 'done',      startTime: '2026-04-27T20:00', endTime: '2026-04-27T21:45', viewerCount: 512, gmv: 2100000, chatModerators: ['@mod_alice'] },
   { id: 'SH007', title: 'Spring Home Décor & Living Essentials Sale',  handle: '@interior_atelier', category: "Women's Apparel", subCategory: 'Vintage',      status: 'done',      startTime: '2026-04-27T15:00', endTime: '2026-04-27T17:30', viewerCount: 891, gmv: 3450000, chatModerators: [] },
   { id: 'SH008', title: "Kids Summer New Arrivals — Girls Collection", handle: '@babymom_store',    category: 'Kids',            subCategory: 'Girls',        status: 'done',      startTime: '2026-04-26T14:00', endTime: '2026-04-26T15:20', viewerCount: 204, gmv: 640000,  chatModerators: [] },
+  { id: 'SH009', title: 'Lauren picks · activewear restock',          handle: '@lauren',           category: "Women's Apparel", subCategory: 'Activewear (Athleisure)', status: 'live',      startTime: '2026-06-11T11:00', endTime: null,               viewerCount: 3200, gmv: 4200000, chatModerators: [] },
+  { id: 'SH010', title: 'Beach Babe edit — dresses, kimonos',          handle: '@lauren',           category: "Women's Apparel", subCategory: 'Contemporary',            status: 'scheduled', startTime: '2026-06-13T20:00', endTime: null,               viewerCount: 0,    gmv: 0,       chatModerators: [] },
+  { id: 'SH011', title: "Lauren's Vintage Atelier — '90s",             handle: '@lauren',           category: "Women's Apparel", subCategory: 'Vintage',                 status: 'scheduled', startTime: '2026-06-13T21:00', endTime: null,               viewerCount: 0,    gmv: 0,       chatModerators: [] },
 ];
 
 export const HOSTS = [
@@ -177,6 +180,90 @@ export const EVENTS = [
       { handle: '@jieun_style',    name: '스타일리스트 지은' },
       { handle: '@vintage_closet', name: '빈티지클로젯' },
     ],
+  },
+];
+
+// ── Seller pool (CLOSET feature picker) ──────────────────────────
+export const SELLERS = [
+  { handle: '@lauren',          name: 'Lauren' },
+  { handle: '@jieun_style',     name: 'Jieun Style' },
+  { handle: '@sneakers_mkt',    name: 'Sneakers Market' },
+  { handle: '@luxury_house',    name: 'Luxury House' },
+  { handle: '@interior_atelier', name: 'Interior Atelier' },
+  { handle: '@vintage_closet',  name: 'Vintage Closet' },
+  { handle: '@beauty_kr',       name: 'Beauty KR' },
+  { handle: '@babymom_store',   name: 'Babymom Store' },
+  { handle: '@reformation',     name: 'Reformation' },
+  { handle: '@alo_yoga',        name: 'Alo Yoga' },
+  { handle: '@lululemon_shop',  name: 'Lululemon Shop' },
+];
+
+// ── For You · Campaign Units (hero carousel) ─────────────────────
+// closetSellers = handles featured in the unit's CLOSET (typed in, max 100).
+// Their scheduled/live shows auto-populate Featured Lives; excludedShows hides some.
+// On-feed status is derived from startDate/endDate vs. now (노출중/예정/종료).
+export const CAMPAIGN_UNITS = [
+  {
+    id: 'CU01', title: 'Lauren X Poshmark',
+    startDate: '2026-06-08T19:00', endDate: '2026-06-20T22:00',
+    bgColor: '#1f3d2f', image: '',
+    closetSellers: ['@lauren', '@reformation', '@sneakers_mkt', '@jieun_style', '@beauty_kr'],
+    excludedShows: ['SH002'],
+  },
+  {
+    id: 'CU02', title: 'Summer Reformation Edit',
+    startDate: '2026-06-15T18:00', endDate: '2026-06-22T21:00',
+    bgColor: '#2a2320', image: '',
+    closetSellers: ['@reformation', '@luxury_house'],
+    excludedShows: [],
+  },
+  {
+    id: 'CU03', title: 'Sneaker Drop Weekend',
+    startDate: '2026-05-20T17:00', endDate: '2026-05-25T23:00',
+    bgColor: '#1a2230', image: '',
+    closetSellers: ['@sneakers_mkt'],
+    excludedShows: [],
+  },
+];
+
+// ── For You · Browse by Theme ────────────────────────────────────
+// mode 'filter' → conditions auto-collect lives; mode 'sellers' → manual seller list.
+export const THEME_UNITS = [
+  {
+    id: 'TU01', title: 'K-Beauty Week', badge: 'POSH MARKETS',
+    bgColor: '#3a1f2a', image: '', enabled: true, mode: 'filter',
+    filters: { saleType: 'ST005', category: 'Beauty', subCategory: 'Skincare', brands: [] },
+    sellers: [],
+  },
+  {
+    id: 'TU02', title: 'Live auctions', badge: '',
+    bgColor: '#1b2433', image: '', enabled: true, mode: 'filter',
+    filters: { saleType: 'ST006', category: '', subCategory: '', brands: [] },
+    sellers: [],
+  },
+  {
+    id: 'TU03', title: 'Best under budget', badge: '',
+    bgColor: '#26331f', image: '', enabled: true, mode: 'filter',
+    filters: { saleType: 'ST004', category: '', subCategory: '', brands: [] },
+    sellers: [],
+  },
+  {
+    id: 'TU04', title: 'Y2K archive', badge: '',
+    bgColor: '#241b33', image: '', enabled: true, mode: 'filter',
+    filters: { saleType: '', category: "Women's Apparel", subCategory: 'Vintage', brands: [] },
+    sellers: [],
+  },
+  {
+    id: 'TU05', title: 'Quiet luxury', badge: '',
+    bgColor: '#2b2b2b', image: '', enabled: true, mode: 'sellers',
+    filters: { saleType: '', category: '', subCategory: '', brands: [] },
+    sellers: ['@luxury_house', '@reformation', '@interior_atelier'],
+  },
+  {
+    id: 'TU06', title: 'Nike & Jordan drop', badge: '',
+    bgColor: '#1f3330', image: '', enabled: true, mode: 'filter',
+    filters: { saleType: '', category: 'Shoes', subCategory: 'Sneakers', brands: ['BT014', 'BT010'] },
+    sellers: [],
   },
 ];
 
