@@ -55,11 +55,11 @@ export const HOSTS = [
 ];
 
 export const HOST_STATS = [
-  { userId: 'U001', handle: '@jieun_style', totalShows: 48, avgViewers: 284, totalGmv: 18500000, avgGmvPerShow: 385417, topCategory: '여성의류', lastShowDate: '2026-04-28' },
-  { userId: 'U002', handle: '@sneakers_mkt', totalShows: 112, avgViewers: 521, totalGmv: 52300000, avgGmvPerShow: 467000, topCategory: '신발', lastShowDate: '2026-04-27' },
-  { userId: 'U003', handle: '@luxury_house', totalShows: 35, avgViewers: 612, totalGmv: 31200000, avgGmvPerShow: 891429, topCategory: '핸드백', lastShowDate: '2026-04-25' },
-  { userId: 'U004', handle: '@interior_atelier', totalShows: 88, avgViewers: 398, totalGmv: 29700000, avgGmvPerShow: 337500, topCategory: '홈/리빙', lastShowDate: '2026-04-27' },
-  { userId: 'U005', handle: '@vintage_closet', totalShows: 22, avgViewers: 189, totalGmv: 8900000, avgGmvPerShow: 404545, topCategory: '남성의류', lastShowDate: '2026-04-27' },
+  { userId: 'U001', handle: '@jieun_style', totalShows: 48, avgViewers: 284, totalGmv: 18500000, avgGmvPerShow: 385417, topCategory: "Women's Apparel", lastShowDate: '2026-04-28' },
+  { userId: 'U002', handle: '@sneakers_mkt', totalShows: 112, avgViewers: 521, totalGmv: 52300000, avgGmvPerShow: 467000, topCategory: 'Shoes', lastShowDate: '2026-04-27' },
+  { userId: 'U003', handle: '@luxury_house', totalShows: 35, avgViewers: 612, totalGmv: 31200000, avgGmvPerShow: 891429, topCategory: 'Bags', lastShowDate: '2026-04-25' },
+  { userId: 'U004', handle: '@interior_atelier', totalShows: 88, avgViewers: 398, totalGmv: 29700000, avgGmvPerShow: 337500, topCategory: 'Home/Living', lastShowDate: '2026-04-27' },
+  { userId: 'U005', handle: '@vintage_closet', totalShows: 22, avgViewers: 189, totalGmv: 8900000, avgGmvPerShow: 404545, topCategory: "Men's Apparel", lastShowDate: '2026-04-27' },
 ];
 
 export const LIVE_CATEGORIES = [
@@ -177,8 +177,8 @@ export const EVENTS = [
     id: '0SKT', title: 'Trending Spring Lookbook',
     startDate: '2026-03-23T08:28', endDate: '2026-03-26T20:28',
     sellers: [
-      { handle: '@jieun_style',    name: '스타일리스트 지은' },
-      { handle: '@vintage_closet', name: '빈티지클로젯' },
+      { handle: '@jieun_style',    name: 'Jieun Style' },
+      { handle: '@vintage_closet', name: 'Vintage Closet' },
     ],
   },
 ];
@@ -201,7 +201,7 @@ export const SELLERS = [
 // ── For You · Campaign Units (hero carousel) ─────────────────────
 // closetSellers = handles featured in the unit's CLOSET (typed in, max 100).
 // Their scheduled/live shows auto-populate Featured Lives; excludedShows hides some.
-// On-feed status is derived from startDate/endDate vs. now (노출중/예정/종료).
+// On-feed status is derived from startDate/endDate vs. now (Live/Upcoming/Ended).
 export const CAMPAIGN_UNITS = [
   {
     id: 'CU01', title: 'Lauren X Poshmark',
@@ -268,12 +268,12 @@ export const THEME_UNITS = [
 ];
 
 export const STATUS_LABELS = {
-  live: '진행중',
-  scheduled: '예정',
-  done: '종료',
-  rehearsal: '리허설',
-  active: '정상',
-  suspended: '정지',
+  live: 'Live',
+  scheduled: 'Scheduled',
+  done: 'Ended',
+  rehearsal: 'Rehearsal',
+  active: 'Active',
+  suspended: 'Suspended',
 };
 
 export const STATUS_BADGE_CLASS = {

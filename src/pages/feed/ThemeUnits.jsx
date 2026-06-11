@@ -125,7 +125,7 @@ export default function ThemeUnits({ units, setUnits }) {
               ) : (
                 <label className="dropzone">
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>⬆ Click to upload tile image</div>
-                  <div style={{ marginTop: 4 }}>권장 규격 800 × 800px (1:1) · JPG·PNG · 최대 3MB</div>
+                  <div style={{ marginTop: 4 }}>Recommended 800 × 800px (1:1) · JPG·PNG · max 3MB</div>
                   <input type="file" accept="image/png,image/jpeg" hidden onChange={onPickImage} />
                 </label>
               )}

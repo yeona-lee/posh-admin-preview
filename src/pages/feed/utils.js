@@ -44,17 +44,17 @@ export function campaignStatus(unit) {
   const now = new Date();
   const s = unit.startDate ? new Date(unit.startDate) : null;
   const e = unit.endDate ? new Date(unit.endDate) : null;
-  if (s && now < s) return { key: 'upcoming', label: '노출예정', cls: 'badge-scheduled' };
-  if (e && now > e)  return { key: 'ended',    label: '노출종료', cls: 'badge-grey' };
-  return { key: 'live', label: '노출중', cls: 'badge-live' };
+  if (s && now < s) return { key: 'upcoming', label: 'Upcoming', cls: 'badge-scheduled' };
+  if (e && now > e)  return { key: 'ended',    label: 'Ended',    cls: 'badge-grey' };
+  return { key: 'live', label: 'Live', cls: 'badge-live' };
 }
 
-// "@a @b @c 외 N명" — show up to `max`, then a count
+// "@a @b @c +N more" — show up to `max`, then a count
 export function closetSummary(handles, max = 3) {
   if (!handles || handles.length === 0) return '–';
   const shown = handles.slice(0, max).join(' ');
   const extra = handles.length - max;
-  return extra > 0 ? `${shown} 외 ${extra}명` : shown;
+  return extra > 0 ? `${shown} +${extra} more` : shown;
 }
 
 // scheduled + live shows belonging to the given seller handles

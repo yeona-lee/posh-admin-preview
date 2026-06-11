@@ -124,7 +124,7 @@ export default function CampaignUnits({ units, setUnits }) {
               ) : (
                 <label className="dropzone">
                   <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>⬆ Click to upload hero image</div>
-                  <div style={{ marginTop: 4 }}>권장 규격 1080 × 1350px (4:5 세로형) · JPG·PNG · 최대 5MB</div>
+                  <div style={{ marginTop: 4 }}>Recommended 1080 × 1350px (4:5 portrait) · JPG·PNG · max 5MB</div>
                   <input type="file" accept="image/png,image/jpeg" hidden onChange={onPickImage} />
                 </label>
               )}
@@ -212,7 +212,7 @@ export default function CampaignUnits({ units, setUnits }) {
   return (
     <>
       <div className="sec-header">
-        <span className="sec-count">{units.length} campaign units · {liveCount} 노출중</span>
+        <span className="sec-count">{units.length} campaign units · {liveCount} live</span>
         <button className="btn btn-primary" onClick={openCreate} disabled={units.length >= MAX_UNITS}>
           + Add Campaign Unit ({units.length}/{MAX_UNITS})
         </button>

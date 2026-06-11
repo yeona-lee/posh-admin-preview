@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { HOST_STATS } from '../data/sampleData';
 
 function formatGmv(n) {
-  return n.toLocaleString('ko-KR') + '원';
+  return '$' + Math.round(n / 1300).toLocaleString('en-US');
 }
 
 export default function StatsPage() {
@@ -15,20 +15,20 @@ export default function StatsPage() {
   return (
     <>
       <div className="sec-header">
-        <span className="sec-count">호스트별 채널 통계</span>
+        <span className="sec-count">Channel stats by host</span>
       </div>
 
       <table className="tbl">
         <thead>
           <tr>
-            <th>호스트</th>
-            <th className="r">총 방송수</th>
-            <th className="r">평균 시청자</th>
-            <th className="r">총 GMV</th>
-            <th className="r">방송당 평균 GMV</th>
-            <th>주요 카테고리</th>
-            <th>마지막 방송</th>
-            <th className="c">상세</th>
+            <th>Host</th>
+            <th className="r">Total Shows</th>
+            <th className="r">Avg Viewers</th>
+            <th className="r">Total GMV</th>
+            <th className="r">Avg GMV / Show</th>
+            <th>Top Category</th>
+            <th>Last Show</th>
+            <th className="c">Details</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +52,7 @@ export default function StatsPage() {
                     className="btn btn-sm btn-secondary"
                     onClick={() => toggle(row.userId)}
                   >
-                    {expandedRow === row.userId ? '접기' : '펼치기'}
+                    {expandedRow === row.userId ? 'Collapse' : 'Expand'}
                   </button>
                 </td>
               </tr>
@@ -61,27 +61,27 @@ export default function StatsPage() {
                   <td colSpan={8} style={{ background: '#f5f5f5', padding: '12px 16px' }}>
                     <div className="detail-grid">
                       <div className="mini-card">
-                        <div className="mini-card-title">총 방송</div>
-                        <div>{row.totalShows}회</div>
+                        <div className="mini-card-title">Total Shows</div>
+                        <div>{row.totalShows}</div>
                       </div>
                       <div className="mini-card">
-                        <div className="mini-card-title">평균 시청자</div>
-                        <div>{row.avgViewers.toLocaleString()}명</div>
+                        <div className="mini-card-title">Avg Viewers</div>
+                        <div>{row.avgViewers.toLocaleString()}</div>
                       </div>
                       <div className="mini-card">
-                        <div className="mini-card-title">총 GMV</div>
+                        <div className="mini-card-title">Total GMV</div>
                         <div>{formatGmv(row.totalGmv)}</div>
                       </div>
                       <div className="mini-card">
-                        <div className="mini-card-title">방송당 평균</div>
+                        <div className="mini-card-title">Avg / Show</div>
                         <div>{formatGmv(row.avgGmvPerShow)}</div>
                       </div>
                       <div className="mini-card">
-                        <div className="mini-card-title">주요 카테고리</div>
+                        <div className="mini-card-title">Top Category</div>
                         <div>{row.topCategory}</div>
                       </div>
                       <div className="mini-card">
-                        <div className="mini-card-title">최근 방송일</div>
+                        <div className="mini-card-title">Last Show Date</div>
                         <div>{row.lastShowDate}</div>
                       </div>
                     </div>

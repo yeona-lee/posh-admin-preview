@@ -1,10 +1,6 @@
-import { LIVE_CATEGORIES } from '../../data/sampleData';
-import { initials, avatarBg, fmtRange, campaignStatus, livesForSellers } from './utils';
+import { initials, avatarBg, fmtRange, livesForSellers } from './utils';
 
-const CAT_EMOJI = {
-  "Women's Apparel": '👗', Beauty: '💄', Shoes: '👟', Bags: '👜',
-  "Men's Apparel": '🧥', Kids: '🧸',
-};
+// Shared preview building blocks used inside the editor forms.
 
 // ── One hero card (campaign unit) ──────────────────────────────
 export function HeroCard({ unit }) {
@@ -51,7 +47,7 @@ export function HeroCard({ unit }) {
                 )}
               </div>
               <span style={{ fontSize: 11 }}>
-                {sellers[0]}{sellers.length > 1 ? ` 외 ${sellers.length - 1}명` : ''}
+                {sellers[0]}{sellers.length > 1 ? ` +${sellers.length - 1} more` : ''}
               </span>
             </div>
           </>
@@ -102,70 +98,6 @@ export function ThemeTile({ unit }) {
         }}>● {unit.badge}</span>
       )}
       <span style={{ position: 'relative', fontSize: 13, fontWeight: 700, lineHeight: 1.1 }}>{unit.title}</span>
-    </div>
-  );
-}
-
-// ── Full For You feed inside a phone frame ──────────────────────
-export default function FeedPreview({ campaignUnits, themeUnits, highlight }) {
-  const campaigns = campaignUnits.filter((u) => campaignStatus(u).key === 'live');
-  const themes = themeUnits.filter((u) => u.enabled);
-
-  const ring = (key) => ({
-    outline: highlight === key ? '2px solid var(--burgundy)' : 'none',
-    outlineOffset: 3, borderRadius: 12, transition: 'outline .15s',
-  });
-
-  return (
-    <div className="phone">
-      <div className="phone-screen">
-        <div className="phone-hd">‹ &nbsp; <span style={{ fontFamily: 'Georgia, serif' }}>Posh Live</span> &nbsp; ⌕</div>
-        <div className="phone-tabs">
-          <span className="on">For You</span><span>Upcoming</span><span>All Live</span>
-        </div>
-
-        <div style={{ padding: '0 12px 16px' }}>
-          {/* campaign carousel — only units currently 노출중 */}
-          <div style={ring('campaign')}>
-            <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 6 }}>
-              {campaigns.length === 0
-                ? <div className="phone-empty">No campaign units live right now</div>
-                : campaigns.map((u) => (
-                    <div key={u.id} style={{ width: 248, flexShrink: 0 }}><HeroCard unit={u} /></div>
-                  ))}
-            </div>
-            {campaigns.length > 1 && (
-              <div style={{ display: 'flex', gap: 5, justifyContent: 'center', margin: '8px 0' }}>
-                {campaigns.map((u, i) => (
-                  <span key={u.id} style={{ width: i === 0 ? 16 : 6, height: 6, borderRadius: 3, background: i === 0 ? '#222' : '#ccc' }} />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* category circles (static) */}
-          <div style={{ display: 'flex', gap: 14, overflowX: 'auto', margin: '16px 0 4px' }}>
-            {LIVE_CATEGORIES.slice(0, 6).map((c) => (
-              <div key={c.id} style={{ textAlign: 'center', width: 56, flexShrink: 0 }}>
-                <div style={{ width: 54, height: 54, borderRadius: '50%', background: '#f3f3f3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>{CAT_EMOJI[c.name] || '🛍'}</div>
-                <div style={{ fontSize: 9.5, marginTop: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.name.split(' ')[0]}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* browse by theme */}
-          <div style={{ marginTop: 18 }}>
-            <div className="phone-sec">Browse by theme</div>
-            <div style={ring('theme')}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-                {themes.length === 0
-                  ? <div className="phone-empty">No themes set</div>
-                  : themes.map((u) => <ThemeTile key={u.id} unit={u} />)}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
