@@ -47,14 +47,6 @@ export default function CampaignUnits({ units, setUnits }) {
       closetSellers: p.closetSellers.filter((h) => h !== handle),
     }));
   }
-  function toggleExclude(showId) {
-    setForm((p) => ({
-      ...p,
-      excludedShows: p.excludedShows.includes(showId)
-        ? p.excludedShows.filter((id) => id !== showId)
-        : [...p.excludedShows, showId],
-    }));
-  }
 
   function save() {
     if (!form.title.trim()) return;
@@ -66,9 +58,6 @@ export default function CampaignUnits({ units, setUnits }) {
 
   // ── editor view ──────────────────────────────────────────────
   if (mode) {
-    const lives = livesForSellers(form.closetSellers);
-    const shownCount = lives.filter((s) => !form.excludedShows.includes(s.id)).length;
-
     return (
       <div className="form-panel">
         <div className="form-panel-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -153,41 +142,6 @@ export default function CampaignUnits({ units, setUnits }) {
                       <button onClick={() => removeSeller(h)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)', fontSize: 13, lineHeight: 1 }}>✕</button>
                     </span>
                   ))}
-                </div>
-              )}
-            </div>
-
-            {/* featured lives — auto-pulled, opt-out */}
-            <div className="form-col">
-              <label className="form-label">FEATURED LIVES &nbsp;<span style={{ color: 'var(--muted)', fontWeight: 400 }}>{shownCount} shown · {form.excludedShows.length} hidden</span></label>
-              <div style={{ fontSize: 11, color: 'var(--muted)', marginBottom: 6 }}>
-                Auto-loaded from the CLOSET sellers' scheduled & live shows. Uncheck to hide a show from the feed.
-              </div>
-              {lives.length === 0 ? (
-                <div style={{ border: '1px dashed var(--border)', borderRadius: 6, padding: 14, textAlign: 'center', color: 'var(--muted)', fontSize: 12 }}>
-                  Add CLOSET sellers above to load their upcoming lives.
-                </div>
-              ) : (
-                <div style={{ border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden' }}>
-                  {lives.map((s) => {
-                    const excluded = form.excludedShows.includes(s.id);
-                    return (
-                      <label key={s.id} style={{
-                        display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
-                        borderBottom: '1px solid var(--border-light)', cursor: 'pointer',
-                        opacity: excluded ? 0.45 : 1,
-                      }}>
-                        <input type="checkbox" checked={!excluded} onChange={() => toggleExclude(s.id)} />
-                        <span className={`badge ${s.status === 'live' ? 'badge-live' : 'badge-scheduled'}`} style={{ fontSize: 9 }}>
-                          {s.status === 'live' ? 'LIVE' : 'SOON'}
-                        </span>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 12, fontWeight: 600, textDecoration: excluded ? 'line-through' : 'none' }}>{s.title}</div>
-                          <div style={{ fontSize: 11, color: 'var(--muted)' }}>{s.handle} · {fmtDate(s.startTime)}</div>
-                        </div>
-                      </label>
-                    );
-                  })}
                 </div>
               )}
             </div>
