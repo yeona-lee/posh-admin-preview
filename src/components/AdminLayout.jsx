@@ -6,6 +6,7 @@ const MENU_ITEMS = [
   { path: '/hosts',      label: 'Host Management'       },
   { path: '/categories', label: 'Category Management'   },
   { path: '/events',     label: 'For You Feed'          },
+  { path: '/campaign-units', label: 'Campaign Units'    },
 ];
 
 const PAGE_TITLE = {

@@ -198,31 +198,68 @@ export const SELLERS = [
   { handle: '@lululemon_shop',  name: 'Lululemon Shop' },
 ];
 
-// ── For You · Campaign Units (hero carousel) ─────────────────────
-// closetSellers = handles featured in the unit's CLOSET (typed in, max 100).
-// Their scheduled/live shows auto-populate Featured Lives; excludedShows hides some.
-// On-feed status is derived from startDate/endDate vs. now (Live/Upcoming/Ended).
+// ── Campaign Units (standalone Show Unit Management) ─────────────
+// internalTitle = ops-only reference (not shown to users); title = on-feed title.
+// status is derived from startDate/endDate vs. now, overridden by `stopped`.
+// closetSellers = featured sellers (typed in). excludedShows = lives stopped from
+// showing during the period. lastEditor = id of who last edited. createdAt orders
+// the All-Units list (newest first).
 export const CAMPAIGN_UNITS = [
   {
-    id: 'CU01', title: 'Lauren X Poshmark',
-    startDate: '2026-06-08T19:00', endDate: '2026-06-20T22:00',
+    id: 'CU01', internalTitle: '[2026-06] Lauren collab — hero A', title: 'Lauren X Poshmark',
+    startDate: '2026-06-01T19:00:00', endDate: '2026-07-31T22:00:00',
     bgColor: '#1f3d2f', image: '',
     closetSellers: ['@lauren', '@reformation', '@sneakers_mkt', '@jieun_style', '@beauty_kr'],
-    excludedShows: ['SH002'],
+    excludedShows: ['SH002'], lastEditor: 'yeona', createdAt: '2026-06-01T09:00:00', stopped: false,
   },
   {
-    id: 'CU02', title: 'Summer Reformation Edit',
-    startDate: '2026-06-15T18:00', endDate: '2026-06-22T21:00',
+    id: 'CU02', internalTitle: '[2026-06] Reformation summer edit', title: 'Summer Reformation Edit',
+    startDate: '2026-06-10T18:00:00', endDate: '2026-07-15T21:00:00',
     bgColor: '#2a2320', image: '',
     closetSellers: ['@reformation', '@luxury_house'],
-    excludedShows: [],
+    excludedShows: [], lastEditor: 'minjun', createdAt: '2026-06-05T09:00:00', stopped: false,
   },
   {
-    id: 'CU03', title: 'Sneaker Drop Weekend',
-    startDate: '2026-05-20T17:00', endDate: '2026-05-25T23:00',
+    id: 'CU03', internalTitle: '[2026-08] Dress week promo', title: 'Summer Dress Week',
+    startDate: '2026-08-14T20:00:00', endDate: '2026-08-20T22:00:00',
+    bgColor: '#3a4a3f', image: '',
+    closetSellers: ['@lauren', '@jieun_style', '@vintage_closet'],
+    excludedShows: [], lastEditor: 'yeona', createdAt: '2026-06-22T09:00:00', stopped: false,
+  },
+  {
+    id: 'CU04', internalTitle: '[2026-05] Sneaker drop weekend', title: 'Sneaker Drop Weekend',
+    startDate: '2026-05-20T17:00:00', endDate: '2026-05-25T23:00:00',
     bgColor: '#1a2230', image: '',
     closetSellers: ['@sneakers_mkt'],
-    excludedShows: [],
+    excludedShows: [], lastEditor: 'sora', createdAt: '2026-05-10T09:00:00', stopped: false,
+  },
+  {
+    id: 'CU05', internalTitle: '[2026-07] K-beauty spotlight', title: 'K-Beauty Spotlight',
+    startDate: '2026-07-20T18:00:00', endDate: '2026-07-25T22:00:00',
+    bgColor: '#3a1f2a', image: '',
+    closetSellers: ['@beauty_kr', '@jieun_style'],
+    excludedShows: [], lastEditor: 'yeona', createdAt: '2026-06-18T09:00:00', stopped: false,
+  },
+  {
+    id: 'CU06', internalTitle: '[2026-06] Vintage vault', title: 'Vintage Vault',
+    startDate: '2026-06-12T18:00:00', endDate: '2026-07-05T22:00:00',
+    bgColor: '#241b33', image: '',
+    closetSellers: ['@vintage_closet', '@interior_atelier'],
+    excludedShows: [], lastEditor: 'minjun', createdAt: '2026-06-12T09:00:00', stopped: true,
+  },
+  {
+    id: 'CU07', internalTitle: '[2026-04] Luxury handbag edit', title: 'Luxury Handbag Edit',
+    startDate: '2026-04-01T18:00:00', endDate: '2026-04-10T22:00:00',
+    bgColor: '#2b2b2b', image: '',
+    closetSellers: ['@luxury_house'],
+    excludedShows: [], lastEditor: 'sora', createdAt: '2026-04-01T09:00:00', stopped: false,
+  },
+  {
+    id: 'CU08', internalTitle: '[2026-03] Spring refresh', title: 'Spring Refresh',
+    startDate: '2026-03-01T18:00:00', endDate: '2026-03-15T22:00:00',
+    bgColor: '#1b2433', image: '',
+    closetSellers: ['@jieun_style', '@reformation'],
+    excludedShows: [], lastEditor: 'yeona', createdAt: '2026-03-01T09:00:00', stopped: false,
   },
 ];
 

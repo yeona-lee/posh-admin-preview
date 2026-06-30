@@ -4,8 +4,13 @@ import ShowsPage from './pages/ShowsPage';
 import HostsPage from './pages/HostsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import EventsPage from './pages/EventsPage';
+import CampaignProvider from './pages/campaign/store';
+import CampaignListPage from './pages/campaign/CampaignListPage';
+import CampaignCreatePage from './pages/campaign/CampaignCreatePage';
+import CampaignEditPage from './pages/campaign/CampaignEditPage';
 
-function App() {
+// The Posh Live admin (shared nav + banner).
+function AdminApp() {
   return (
     <AdminLayout>
       <Routes>
@@ -16,6 +21,22 @@ function App() {
         <Route path="/events"     element={<EventsPage />} />
       </Routes>
     </AdminLayout>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      {/* Standalone Campaign Units domain — own layout/provider */}
+      <Route path="/campaign-units" element={<CampaignProvider />}>
+        <Route index            element={<CampaignListPage />} />
+        <Route path="new"       element={<CampaignCreatePage />} />
+        <Route path=":id/edit"  element={<CampaignEditPage />} />
+      </Route>
+
+      {/* Everything else = Posh Live admin */}
+      <Route path="/*" element={<AdminApp />} />
+    </Routes>
   );
 }
 
