@@ -145,11 +145,15 @@ export default function CampaignListPage() {
                       <span style={{ color: 'var(--muted)' }}>–</span>
                     ) : (
                       <div className="actions" style={{ justifyContent: 'center', gap: 8 }}>
-                        {disabled
-                          ? <button className="link" style={{ color: 'var(--green)' }} onClick={() => resume(u.id)}>Resume</button>
-                          : <button className="link" style={{ color: 'var(--red)' }} onClick={() => stop(u.id)}>Stop</button>}
-                        <span style={{ color: 'var(--border)' }}>·</span>
-                        <button className="link" onClick={() => navigate(`/campaign-units/${u.id}/edit`)}>Edit</button>
+                        {disabled ? (
+                          <>
+                            <button className="link" style={{ color: 'var(--green)' }} onClick={() => resume(u.id)}>Resume</button>
+                            <span style={{ color: 'var(--border)' }}>·</span>
+                            <button className="link" onClick={() => navigate(`/campaign-units/${u.id}/edit`)}>Edit</button>
+                          </>
+                        ) : (
+                          <button className="link" style={{ color: 'var(--red)' }} onClick={() => stop(u.id)}>Stop</button>
+                        )}
                       </div>
                     )}
                   </td>
